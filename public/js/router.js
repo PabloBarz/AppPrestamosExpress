@@ -42,6 +42,11 @@ const ROUTES = {
     view: "/views/modelos.html",
     module: () => ModelosModule,
   },
+  login: {
+    title: "Login",
+    view: "/views/login.html",
+    module: () => LoginModule,
+  },
 };
 
 /* ════════════════════════════════════════════
@@ -62,6 +67,33 @@ const Router = {
    * @param {string} page  - clave de ROUTES (ej: 'productos')
    */
   async navigateTo(page, params = {}) {
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("mainContent");
+
+    if (page === "login") {
+      sidebar.style.display = "none";
+      main.style.marginLeft = "0"; 
+      document.body.style.overflow = "hidden";
+    } else {
+      sidebar.style.display = "block";
+      main.style.marginLeft = ""; 
+      document.body.style.overflow = ""; 
+    }
+
+    const token = localStorage.getItem("token");
+
+    //  No autenticado → solo puede ir a login
+    if (!token && page !== "login") {
+      this.navigateTo("login");
+      return;
+    }
+
+    //  Ya logueado → no volver a login
+    if (token && page === "login") {
+      this.navigateTo("dashboard");
+      return;
+    }
+
     const route = ROUTES[page];
 
     if (!route) {

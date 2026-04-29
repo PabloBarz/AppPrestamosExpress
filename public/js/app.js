@@ -3,7 +3,7 @@
  * Punto de arranque de la SPA.
  */
 
-'use strict';
+"use strict";
 
 const AppState = {
   marcas: [],
@@ -13,9 +13,8 @@ const AppState = {
 };
 
 const DeleteModal = {
-
   render() {
-    document.getElementById('modalsContainer').innerHTML = `
+    document.getElementById("modalsContainer").innerHTML = `
       <div class="modal-overlay" id="modalDeleteOverlay">
         <div class="modal-panel modal-sm">
           <div class="modal-header-custom">
@@ -38,12 +37,21 @@ const DeleteModal = {
         </div>
       </div>`;
 
-    document.getElementById('btnConfirmDelete').addEventListener('click', () => this._execute());
-    document.getElementById('btnCancelDelete').addEventListener('click', () => closeOverlay('modalDeleteOverlay'));
-    document.getElementById('btnCloseDelete').addEventListener('click', () => closeOverlay('modalDeleteOverlay'));
-    document.getElementById('modalDeleteOverlay').addEventListener('click', e => {
-      if (e.target.id === 'modalDeleteOverlay') closeOverlay('modalDeleteOverlay');
-    });
+    document
+      .getElementById("btnConfirmDelete")
+      .addEventListener("click", () => this._execute());
+    document
+      .getElementById("btnCancelDelete")
+      .addEventListener("click", () => closeOverlay("modalDeleteOverlay"));
+    document
+      .getElementById("btnCloseDelete")
+      .addEventListener("click", () => closeOverlay("modalDeleteOverlay"));
+    document
+      .getElementById("modalDeleteOverlay")
+      .addEventListener("click", (e) => {
+        if (e.target.id === "modalDeleteOverlay")
+          closeOverlay("modalDeleteOverlay");
+      });
   },
 
   open(type, id, name, onConfirm) {
@@ -55,28 +63,29 @@ const DeleteModal = {
       tipoHerramienta: `¿Eliminar el tipo "<strong>${escapeHtml(name)}</strong>"? Solo se puede si no tiene modelos asociados.`,
     };
 
-    document.getElementById('deleteMessage').innerHTML = msgs[type] || '¿Confirmar eliminacion?';
-    openOverlay('modalDeleteOverlay');
+    document.getElementById("deleteMessage").innerHTML =
+      msgs[type] || "¿Confirmar eliminacion?";
+    openOverlay("modalDeleteOverlay");
   },
 
   async _execute() {
     const { onConfirm } = AppState.deleteTarget;
-    closeOverlay('modalDeleteOverlay');
-    if (typeof onConfirm === 'function') await onConfirm();
+    closeOverlay("modalDeleteOverlay");
+    if (typeof onConfirm === "function") await onConfirm();
   },
 };
 
 function updateBadges() {
-  setText('badge-marcas', AppState.marcas.length);
-  setText('badge-tipos-herramienta', AppState.tiposHerramienta.length);
+  setText("badge-marcas", AppState.marcas.length);
+  setText("badge-tipos-herramienta", AppState.tiposHerramienta.length);
 }
 
 async function loadCatalogData() {
   try {
     const [marcasRes, tiposRes, modelosRes] = await Promise.all([
-      http('/api/marcas'),
-      http('/api/tipo-herramientas'),
-      http('/api/modelos'),
+      http("/api/marcas"),
+      http("/api/tipo-herramientas"),
+      http("/api/modelos"),
     ]);
 
     AppState.marcas = marcasRes.data;
@@ -84,13 +93,41 @@ async function loadCatalogData() {
     AppState.modelos = modelosRes.data;
     updateBadges();
   } catch (e) {
-    showToast('Error al cargar datos iniciales: ' + e.message, 'error');
+    showToast("Error al cargar datos iniciales: " + e.message, "error");
   }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("click", (e) => {
+  //  LOGOUT
+  if (e.target.closest("#btnLogout")) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    Router.navigateTo("login");
+  }
+
+  //  DROPDOWN USUARIO
+  const btn = document.getElementById("userMenuBtn");
+  const dropdown = document.getElementById("userDropdown");
+
+  if (!btn || !dropdown) return;
+
+  if (btn.contains(e.target)) {
+    dropdown.classList.toggle("open");
+  } else {
+    dropdown.classList.remove("open");
+  }
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
   DeleteModal.render();
   Router.init();
   await loadCatalogData();
-  Router.navigateTo('dashboard');
+
+  const token = localStorage.getItem("token");
+  if (token) {
+    Router.navigateTo("dashboard");
+  } else {
+    Router.navigateTo("login");
+  }
 });
