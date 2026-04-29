@@ -27,21 +27,16 @@ const ROUTES = {
     view:   '/views/dashboard.html',   // HTML de la vista
     module: () => DashboardModule,     // Módulo JS que la controla
   },
-  productos: {
-    title:  'Productos',
-    view:   '/views/productos.html',
-    module: () => ProductosModule,
-  },
   marcas: {
     title:  'Marcas',
     view:   '/views/marcas.html',
     module: () => MarcasModule,
   },
-  clientes: {
-    title: 'Clientes',
-    view: '/views/clientes.html',
-    module: () => ClientesModule,
-  }
+  tipoHerramientas: {
+    title: 'Tipos de Herramienta',
+    view: '/views/tipo-herramientas.html',
+    module: () => TipoHerramientasModule,
+  },
   // ── Ejemplo de cómo agregar una ruta nueva en el futuro ──
   // clientes: {
   //   title:  'Clientes',

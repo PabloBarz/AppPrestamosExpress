@@ -68,6 +68,7 @@ const DeleteModal = {
 
 function updateBadges() {
   setText('badge-marcas', AppState.marcas.length);
+  setText('badge-tipos-herramienta', AppState.tiposHerramienta.length);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
