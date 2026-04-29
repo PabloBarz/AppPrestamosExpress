@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/marcas', require('./routes/marcas'));
 app.use('/api/tipo-herramientas', require('./routes/tipo_herramientas')); 
 app.use('/api/modelos', require('./routes/modelos'));
+app.use('/api/auth', require('./routes/auth'));
 
 // 3. SPA: redirigir todo al index.html
 app.get('/{*path}', (req, res) => {

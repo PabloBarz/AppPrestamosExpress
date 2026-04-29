@@ -95,3 +95,37 @@ INSERT INTO herramientas (
 (18, NULL, 'H-018', 'Herramienta Truper', 'SER018', 'Disponible', 'Almacen C'),
 (19, NULL, 'H-019', 'Equipo Ingco', 'SER019', 'Disponible', 'Almacen A'),
 (20, NULL, 'H-020', 'Equipo Ingco', 'SER020', 'Disponible', 'Almacen A');
+
+
+-- =========================
+-- LOGIN
+-- =========================
+
+-- =========================
+-- ROLES
+-- =========================
+
+INSERT INTO roles (nombre, descripcion) VALUES
+('Administrador', 'Acceso total al sistema'),
+('Almacen', 'Gestion de prestamos y devoluciones'),
+('Trabajador', 'Solo consulta herramientas');
+
+-- =========================
+-- PERSONAS
+-- =========================
+
+INSERT INTO personas (tipodoc, doc, nombre, apellidos, telefono, fecha_nac) VALUES
+('DNI', '77420150', 'Roberto Pablo', 'Barzola Claudio', '999111111', '2004-05-09'),
+('DNI', '87654321', 'Juan', 'Perez', '999222222', '1995-03-15'),
+('DNI', '11223344', 'Maria', 'Lopez', '999333333', '1998-08-20');
+
+-- =========================
+-- USUARIO
+-- =========================
+
+INSERT INTO usuarios (id_persona, id_rol, user_name, contrasena) VALUES
+(1, 1, 'admin', '$2b$10$Gaxbj.xyKb09yRQsaM7HMufecCzUfL/X8K/koXzHpj5ws1ktT8rwW'),
+(2, 2, 'almacen1', '$2b$10$Gaxbj.xyKb09yRQsaM7HMufecCzUfL/X8K/koXzHpj5ws1ktT8rwW'),
+(3, 3, 'trabajador1', '$2b$10$Gaxbj.xyKb09yRQsaM7HMufecCzUfL/X8K/koXzHpj5ws1ktT8rwW');
+
+

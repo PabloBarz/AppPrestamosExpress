@@ -68,11 +68,13 @@ CREATE TABLE usuarios (
     user_name VARCHAR(50) NOT NULL,
     contrasena VARCHAR(255) NOT NULL,
     estado ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
+
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT uq_usuarios_user_name UNIQUE (user_name),
     CONSTRAINT fk_usuarios_personas FOREIGN KEY (id_persona) REFERENCES personas(id_persona),
+    CONSTRAINT uq_usuarios_id_persona UNIQUE (id_persona),
     CONSTRAINT fk_usuarios_roles FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 ) ENGINE=InnoDB;
 
@@ -91,6 +93,7 @@ CREATE TABLE colaboradores (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_colaboradores_personas FOREIGN KEY (id_persona) REFERENCES personas(id_persona),
+    CONSTRAINT uq_colaboradores_id_persona UNIQUE (id_persona),
     CONSTRAINT fk_colaboradores_jornadas FOREIGN KEY (id_jornada) REFERENCES jornadas(id_jornada),
     CONSTRAINT fk_colaboradores_areas FOREIGN KEY (id_area) REFERENCES areas(id_area)
 ) ENGINE=InnoDB;
