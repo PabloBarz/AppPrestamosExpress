@@ -15,7 +15,7 @@
  *  d) Agregar el <a data-page="nueva-pagina"> en el sidebar del index.html
  */
 
-'use strict';
+"use strict";
 
 /* ════════════════════════════════════════════
    REGISTRO DE RUTAS
@@ -23,26 +23,25 @@
 ════════════════════════════════════════════ */
 const ROUTES = {
   dashboard: {
-    title:  'Dashboard',
-    view:   '/views/dashboard.html',   // HTML de la vista
-    module: () => DashboardModule,     // Módulo JS que la controla
+    title: "Dashboard",
+    view: "/views/dashboard.html", // HTML de la vista
+    module: () => DashboardModule, // Módulo JS que la controla
   },
   marcas: {
-    title:  'Marcas',
-    view:   '/views/marcas.html',
+    title: "Marcas",
+    view: "/views/marcas.html",
     module: () => MarcasModule,
   },
   tipoHerramientas: {
-    title: 'Tipos de Herramienta',
-    view: '/views/tipo-herramientas.html',
+    title: "Tipos de Herramienta",
+    view: "/views/tipo-herramientas.html",
     module: () => TipoHerramientasModule,
   },
-  // ── Ejemplo de cómo agregar una ruta nueva en el futuro ──
-  // clientes: {
-  //   title:  'Clientes',
-  //   view:   '/views/clientes.html',
-  //   module: () => ClientesModule,
-  // },
+  modelos: {
+    title: "Modelos",
+    view: "/views/modelos.html",
+    module: () => ModelosModule,
+  },
 };
 
 /* ════════════════════════════════════════════
@@ -56,14 +55,13 @@ const viewCache = {};
    ROUTER
 ════════════════════════════════════════════ */
 const Router = {
-
   currentPage: null,
 
   /**
    * Navega a una página registrada en ROUTES.
    * @param {string} page  - clave de ROUTES (ej: 'productos')
    */
-  async navigateTo(page) {
+  async navigateTo(page, params = {}) {
     const route = ROUTES[page];
 
     if (!route) {
@@ -71,15 +69,21 @@ const Router = {
       return;
     }
 
+    this.currentParams = params;
+
     // 1. Actualizar sidebar
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+    document
+      .querySelectorAll(".nav-item")
+      .forEach((n) => n.classList.remove("active"));
+    document
+      .querySelector(`.nav-item[data-page="${page}"]`)
+      ?.classList.add("active");
 
     // 2. Actualizar título del topbar
-    setText('topbarTitle', route.title);
+    setText("topbarTitle", route.title);
 
     // 3. Mostrar spinner mientras carga
-    const container = document.getElementById('pageContainer');
+    const container = document.getElementById("pageContainer");
     container.innerHTML = `
       <div class="d-flex justify-content-center align-items-center" style="height:60vh">
         <div class="spinner-custom"></div>
@@ -89,7 +93,8 @@ const Router = {
     try {
       if (!viewCache[page]) {
         const res = await fetch(route.view);
-        if (!res.ok) throw new Error(`No se pudo cargar la vista: ${route.view}`);
+        if (!res.ok)
+          throw new Error(`No se pudo cargar la vista: ${route.view}`);
         viewCache[page] = await res.text();
       }
 
@@ -98,7 +103,7 @@ const Router = {
 
       // 6. Inicializar el módulo de la página
       const mod = route.module();
-      if (mod && typeof mod.init === 'function') {
+      if (mod && typeof mod.init === "function") {
         await mod.init();
       }
 
@@ -106,7 +111,6 @@ const Router = {
 
       // 7. Cerrar sidebar en móvil
       this._closeSidebarMobile();
-
     } catch (err) {
       container.innerHTML = `
         <div class="empty-state" style="padding:80px 20px">
@@ -114,7 +118,7 @@ const Router = {
           <p class="mt-3">Error al cargar la vista <strong>${page}</strong></p>
           <p style="font-size:12px;color:var(--text-muted)">${err.message}</p>
         </div>`;
-      console.error('Router error:', err);
+      console.error("Router error:", err);
     }
   },
 
@@ -124,35 +128,37 @@ const Router = {
    */
   init() {
     // Clicks del sidebar
-    document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-      item.addEventListener('click', e => {
+    document.querySelectorAll(".nav-item[data-page]").forEach((item) => {
+      item.addEventListener("click", (e) => {
         e.preventDefault();
         Router.navigateTo(item.dataset.page);
       });
     });
 
     // Toggle sidebar móvil
-    document.getElementById('btnToggleSidebar')?.addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('sidebarOverlay').classList.toggle('open');
-    });
+    document
+      .getElementById("btnToggleSidebar")
+      ?.addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("sidebarOverlay").classList.toggle("open");
+      });
 
-    document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+    document.getElementById("sidebarOverlay")?.addEventListener("click", () => {
       this._closeSidebarMobile();
     });
 
     // Cerrar modales con Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.modal-overlay.open').forEach(m => {
-          m.classList.remove('open');
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        document.querySelectorAll(".modal-overlay.open").forEach((m) => {
+          m.classList.remove("open");
         });
       }
     });
   },
 
   _closeSidebarMobile() {
-    document.getElementById('sidebar')?.classList.remove('open');
-    document.getElementById('sidebarOverlay')?.classList.remove('open');
+    document.getElementById("sidebar")?.classList.remove("open");
+    document.getElementById("sidebarOverlay")?.classList.remove("open");
   },
 };

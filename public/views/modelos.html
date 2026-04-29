@@ -1,0 +1,51 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title" id="tituloModelos">Modelos</h1>
+    <p class="page-subtitle" id="subtituloModelos">Listado de modelos</p>
+  </div>
+</div>
+
+<div class="search-bar-row">
+  <div class="search-input-wrap">
+    <i class="bi bi-search search-icon"></i>
+    <input
+      type="text"
+      id="searchModelo"
+      class="search-input"
+      placeholder="Buscar modelo, marca o tipo..."
+    />
+  </div>
+
+  <button class="btn-icon-outline" id="btnRefreshModelos" title="Recargar">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+</div>
+
+<div class="card-panel">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Modelo</th>
+          <th>Marca</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+
+      <tbody id="bodyModelos">
+        <tr>
+          <td colspan="4" class="text-center py-5">
+            <div class="spinner-custom"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <span class="text-muted text-sm" id="totalModelosLabel">
+      Cargando...
+    </span>
+  </div>
+</div>

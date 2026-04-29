@@ -2,10 +2,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-// GET - Obtener todos los modelos
+// GET - Obtener todos los modelos filtrado por marca o por tipo_herramienta
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { id_marca, id_tipo } = req.query;
+
+    let query = `
       SELECT
         mo.id_modelo,
         mo.id_marca,
@@ -16,10 +18,29 @@ router.get('/', async (req, res) => {
       FROM modelos mo
       INNER JOIN marcas ma ON mo.id_marca = ma.id_marca
       INNER JOIN tipo_herramienta th ON mo.id_tipo_herramienta = th.id_tipo_herramienta
-      ORDER BY ma.nombre ASC, th.tipo ASC, mo.modelo ASC
-    `);
+    `;
+
+    const params = [];
+
+    //  filtro por marca
+    if (id_marca) {
+      query += ` WHERE mo.id_marca = ?`;
+      params.push(id_marca);
+    }
+
+    //  filtro por tipo
+    if (id_tipo) {
+      query += params.length ? ` AND` : ` WHERE`;
+      query += ` mo.id_tipo_herramienta = ?`;
+      params.push(id_tipo);
+    }
+
+    query += ` ORDER BY ma.nombre ASC, th.tipo ASC, mo.modelo ASC`;
+
+    const [rows] = await db.query(query, params);
 
     res.json({ success: true, data: rows });
+
   } catch (err) {
     res.status(500).json({
       success: false,

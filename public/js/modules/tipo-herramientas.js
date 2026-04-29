@@ -62,8 +62,23 @@ const TipoHerramientasModule = {
           <td>${escapeHtml(tipoHerramienta.descripcion) || '<span class="text-muted">Sin descripcion</span>'}</td>
           <td><span class="badge-garantia">${totalModelos} modelo${totalModelos !== 1 ? 's' : ''}</span></td>
           <td>
-            <button class="btn-action btn-action-edit" onclick="TipoHerramientasModule.openEdit(${tipoHerramienta.id_tipo_herramienta})" title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="btn-action btn-action-delete" onclick="TipoHerramientasModule.confirmDel(${tipoHerramienta.id_tipo_herramienta}, '${escapeHtml(tipoHerramienta.tipo)}')" title="Eliminar"><i class="bi bi-trash3-fill"></i></button>
+            <button class="btn-action"
+              onclick="Router.navigateTo('modelos', { id_tipo: ${tipoHerramienta.id_tipo_herramienta}, nombre: '${escapeHtml(tipoHerramienta.tipo)}' })"
+              title="Ver modelos">
+              <i class="bi bi-eye-fill"></i>
+            </button>
+
+            <button class="btn-action btn-action-edit"
+              onclick="TipoHerramientasModule.openEdit(${tipoHerramienta.id_tipo_herramienta})"
+              title="Editar">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+
+            <button class="btn-action btn-action-delete"
+              onclick="TipoHerramientasModule.confirmDel(${tipoHerramienta.id_tipo_herramienta}, '${escapeHtml(tipoHerramienta.tipo)}')"
+              title="Eliminar">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
           </td>
         </tr>`;
     }).join('');
