@@ -71,8 +71,26 @@ function updateBadges() {
   setText('badge-tipos-herramienta', AppState.tiposHerramienta.length);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+async function loadCatalogData() {
+  try {
+    const [marcasRes, tiposRes, modelosRes] = await Promise.all([
+      http('/api/marcas'),
+      http('/api/tipo-herramientas'),
+      http('/api/modelos'),
+    ]);
+
+    AppState.marcas = marcasRes.data;
+    AppState.tiposHerramienta = tiposRes.data;
+    AppState.modelos = modelosRes.data;
+    updateBadges();
+  } catch (e) {
+    showToast('Error al cargar datos iniciales: ' + e.message, 'error');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   DeleteModal.render();
   Router.init();
+  await loadCatalogData();
   Router.navigateTo('dashboard');
 });
