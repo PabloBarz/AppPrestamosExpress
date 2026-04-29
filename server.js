@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Rutas API ────────────────────────────────────────────────
+app.use('/api/marcas', require('./routes/marcas'));
 
 // 3. SPA: redirigir todo al index.html
 app.get('/{*path}', (req, res) => {
