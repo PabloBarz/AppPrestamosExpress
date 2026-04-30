@@ -11,6 +11,8 @@ CREATE TABLE roles (
     nombre VARCHAR(50) NOT NULL,
     descripcion VARCHAR(150) NULL,
     estado ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
+
+    CONSTRAINT uq_roles_nombre UNIQUE (nombre),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -22,7 +24,11 @@ DROP TABLE IF EXISTS areas;
 CREATE TABLE areas (
     id_area INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    estado ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
+    estado ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
+
+    CONSTRAINT uq_areas_nombre UNIQUE (nombre),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -54,7 +60,10 @@ CREATE TABLE jornadas (
     hora_fin TIME NOT NULL,
     turno VARCHAR(50) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT ck_horas CHECK (hora_inicio < hora_fin),
+    CONSTRAINT uk_jornadas_nombre_turno UNIQUE(nombre, turno)
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -113,7 +122,7 @@ CREATE TABLE proveedores (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT uq_proveedores_ruc UNIQUE (ruc)
+    CONSTRAINT uk_proveedores_ruc UNIQUE (ruc)
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -124,8 +133,22 @@ CREATE TABLE marcas (
     id_marca INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion VARCHAR(150) NULL,
+
+    CONSTRAINT uq_marcas_nombre UNIQUE (nombre),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS categorias;
+CREATE TABLE categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(150) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT uq_categorias_nombre UNIQUE(nombre)
+
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -134,10 +157,15 @@ CREATE TABLE marcas (
 DROP TABLE IF EXISTS tipo_herramienta;
 CREATE TABLE tipo_herramienta (
     id_tipo_herramienta INT AUTO_INCREMENT PRIMARY KEY,
+    id_categoria INT NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     descripcion VARCHAR(150) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT uq_tipo_nombre UNIQUE (tipo),
+    CONSTRAINT fk_tipo_categoria FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria)
+
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -152,6 +180,7 @@ CREATE TABLE modelos (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    CONSTRAINT uq_idmarca_idtipo_modelo UNIQUE(id_marca, id_tipo_herramienta, modelo),
     CONSTRAINT fk_modelos_marcas FOREIGN KEY (id_marca) REFERENCES marcas(id_marca),
     CONSTRAINT fk_modelos_tipo_herramienta FOREIGN KEY (id_tipo_herramienta) REFERENCES tipo_herramienta(id_tipo_herramienta)
 ) ENGINE=InnoDB;
@@ -171,7 +200,9 @@ CREATE TABLE compras (
     estado ENUM('Registrado','Anulado') NOT NULL DEFAULT 'Registrado',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
+    
+    CONSTRAINT ck_total CHECK (total >= 0),
+    CONSTRAINT uq_compras_proveedor_comprobante UNIQUE(id_proveedor, numero_comprobante),
     CONSTRAINT fk_compras_proveedores FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor),
     CONSTRAINT fk_compras_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 ) ENGINE=InnoDB;
@@ -190,6 +221,10 @@ CREATE TABLE detalle_compras (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    CONSTRAINT ck_precio CHECK (precio_unitario > 0),
+    CONSTRAINT ck_subtotal CHECK (subtotal >= 0),
+    CONSTRAINT ck_cantidad CHECK (cantidad > 0),
+    CONSTRAINT uq_id_compras_id_modelo UNIQUE(id_compras, id_modelo),
     CONSTRAINT fk_detalle_compras_compras FOREIGN KEY (id_compras) REFERENCES compras(id_compras),
     CONSTRAINT fk_detalle_compras_modelos FOREIGN KEY (id_modelo) REFERENCES modelos(id_modelo)
 ) ENGINE=InnoDB;
@@ -204,7 +239,6 @@ CREATE TABLE herramientas (
     id_detalle_compras INT NULL,
     codigoqr VARCHAR(100) NULL,
     codigo VARCHAR(50) NOT NULL,
-    nombre VARCHAR(150) NOT NULL,
     numero_serie VARCHAR(100) NOT NULL,
     estado ENUM('Disponible','Prestado','Mantenimiento','Danado','Perdido') NOT NULL DEFAULT 'Disponible',
     ubicacion VARCHAR(150) NULL,
@@ -256,6 +290,11 @@ CREATE TABLE detalle_prestamos (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    CONSTRAINT ck_fechas CHECK (
+    hora_devolucion_final IS NULL 
+    OR hora_devolucion_final >= hora_prestamo
+    ),
+    CONSTRAINT uq_idprestamo_idherramienta UNIQUE(id_prestamo, id_herramienta),
     CONSTRAINT fk_detalle_prestamos_prestamos FOREIGN KEY (id_prestamo) REFERENCES prestamos(id_prestamo),
     CONSTRAINT fk_detalle_prestamos_herramientas FOREIGN KEY (id_herramienta) REFERENCES herramientas(id_herramienta),
     CONSTRAINT fk_detalle_prestamos_usuarios_devolucion FOREIGN KEY (id_usuario_devolucion) REFERENCES usuarios(id_usuario)
@@ -275,6 +314,8 @@ CREATE TABLE bajas (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    CONSTRAINT ck_fecha_baja CHECK (fecha_baja <= CURRENT_DATE),
     CONSTRAINT fk_bajas_herramientas FOREIGN KEY (id_herramienta) REFERENCES herramientas(id_herramienta),
-    CONSTRAINT fk_bajas_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+    CONSTRAINT fk_bajas_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    CONSTRAINT uq_bajas_herramientas UNIQUE(id_herramienta)
 ) ENGINE=InnoDB;

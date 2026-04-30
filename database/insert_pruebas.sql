@@ -14,14 +14,42 @@ INSERT INTO areas (nombre) VALUES
 
 
 -- =========================
+-- CATEGORIA HERRAMIENTA
+-- =========================
+INSERT INTO categorias (nombre, descripcion) VALUES
+('Eléctrica', 'Herramientas que funcionan con energía eléctrica'),
+('Manual', 'Herramientas que se operan sin energía externa'),
+('Neumática', 'Herramientas que funcionan con aire comprimido'),
+('Medición', 'Herramientas utilizadas para medir magnitudes'),
+('Seguridad', 'Equipos de protección personal');
+
+-- =========================
 -- TIPO HERRAMIENTA
 -- =========================
-INSERT INTO tipo_herramienta (tipo, descripcion) VALUES
-('Manual', 'Herramientas de uso manual'),
-('Electrica', 'Herramientas con motor electrico'),
-('Neumatica', 'Herramientas de aire comprimido'),
-('Medicion', 'Herramientas de medicion'),
-('Seguridad', 'Equipos de proteccion');
+
+INSERT INTO tipo_herramienta (id_categoria, tipo, descripcion) VALUES
+-- ELÉCTRICAS (1)
+(1, 'Taladro', 'Herramienta eléctrica para perforar superficies'),
+(1, 'Amoladora', 'Herramienta eléctrica para cortar o desbastar materiales'),
+(1, 'Sierra eléctrica', 'Herramienta para cortar madera o metal con motor'),
+
+-- MANUALES (2)
+(2, 'Martillo', 'Herramienta manual para golpear o clavar'),
+(2, 'Destornillador', 'Herramienta manual para ajustar tornillos'),
+(2, 'Llave inglesa', 'Herramienta para ajustar tuercas y pernos'),
+
+-- NEUMÁTICAS (3)
+(3, 'Pistola neumática', 'Herramienta de aire comprimido para clavos o pintura'),
+(3, 'Llave de impacto', 'Herramienta neumática para ajuste de pernos'),
+
+-- MEDICIÓN (4)
+(4, 'Cinta métrica', 'Herramienta para medir longitudes'),
+(4, 'Nivel', 'Herramienta para verificar horizontalidad o verticalidad'),
+
+-- SEGURIDAD (5)
+(5, 'Casco', 'Equipo de protección para la cabeza'),
+(5, 'Guantes', 'Protección para las manos'),
+(5, 'Lentes de seguridad', 'Protección para los ojos');
 
 -- =========================
 -- MARCAS
