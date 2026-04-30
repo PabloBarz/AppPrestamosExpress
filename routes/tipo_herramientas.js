@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const authorizeRoles = require('../middlewares/roles');
 
 // GET - Obtener todos los tipos de herramienta
 router.get('/', async (req, res) => {
@@ -49,7 +50,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST - Crear nuevo tipo de herramienta
-router.post('/', async (req, res) => {
+router.post('/', authorizeRoles('Administrador'),async (req, res) => {
   const { tipo, descripcion } = req.body;
 
   if (!tipo || tipo.trim() === '') {
@@ -80,7 +81,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT - Actualizar tipo de herramienta
-router.put('/:id', async (req, res) => {
+router.put('/:id', authorizeRoles('Administrador'),async (req, res) => {
   const { tipo, descripcion } = req.body;
 
   if (!tipo || tipo.trim() === '') {
@@ -119,7 +120,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE - Eliminar tipo de herramienta
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authorizeRoles('Administrador'),async (req, res) => {
   try {
     const [modelos] = await db.query(
       'SELECT COUNT(*) AS total FROM modelos WHERE id_tipo_herramienta = ?',

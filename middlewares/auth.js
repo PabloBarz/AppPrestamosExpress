@@ -1,25 +1,42 @@
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
-module.exports = function verifyToken(req, res, next){
-    const authHeader = req.headers['authorization'];
+module.exports = function verifyToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
 
-    if(!authHeader){
-        return res.status(401).json({
-            success : false,
-            message : 'Token requerido'
-        })
+  // Verificar que exista header
+  if (!authHeader) {
+    return res.status(401).json({
+      success: false,
+      message: "Token requerido",
+    });
+  }
+
+  // Extraer token
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Token inválido",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    // Diferenciar errores
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token expirado",
+      });
     }
 
-    const token  = authHeader.split(' ')[1] 
-
-    try{
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    }catch(err){
-        return res.status(401).json({
-            success : false,
-            message : "Token invalido"
-        })
-    }
-}
+    return res.status(401).json({
+      success: false,
+      message: "Token inválido",
+    });
+  }
+};

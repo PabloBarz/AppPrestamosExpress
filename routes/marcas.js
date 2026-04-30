@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const authorizeRoles = require('../middlewares/roles');
 
 // GET - Obtener todas las marcas
 router.get('/', async (req, res) => {
@@ -47,7 +48,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST - Crear nueva marca
-router.post('/', async (req, res) => {
+router.post('/', authorizeRoles('Administrador'), async (req, res) => {
   const { nombre, descripcion } = req.body;
 
   if (!nombre || nombre.trim() === '') {
@@ -78,7 +79,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT - Actualizar marca
-router.put('/:id', async (req, res) => {
+router.put('/:id', authorizeRoles('Administrador'),async (req, res) => {
   const { nombre, descripcion } = req.body;
 
   if (!nombre || nombre.trim() === '') {
@@ -115,7 +116,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE - Eliminar marca
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authorizeRoles('Administrador'),async (req, res) => {
   try {
     const [modelos] = await db.query(
       'SELECT COUNT(*) AS total FROM modelos WHERE id_marca = ?',
