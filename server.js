@@ -20,6 +20,7 @@ app.use('/api/marcas', verifyToken, require('./routes/marcas'));
 app.use('/api/tipo-herramientas', verifyToken, require('./routes/tipo_herramientas'));
 app.use('/api/modelos', verifyToken, require('./routes/modelos'));
 app.use('/api/usuarios', verifyToken, require('./routes/usuarios'));
+app.use('/api/proveedores', verifyToken, require('./routes/proveedores'));
 app.use('/api/auth', require('./routes/auth'));
 
 // 3. SPA: redirigir todo al index.html
