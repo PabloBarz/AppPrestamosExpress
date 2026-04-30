@@ -313,8 +313,7 @@ CREATE TABLE bajas (
     fecha_baja DATE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT ck_fecha_baja CHECK (fecha_baja <= CURRENT_DATE),
+    
     CONSTRAINT fk_bajas_herramientas FOREIGN KEY (id_herramienta) REFERENCES herramientas(id_herramienta),
     CONSTRAINT fk_bajas_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
     CONSTRAINT uq_bajas_herramientas UNIQUE(id_herramienta)

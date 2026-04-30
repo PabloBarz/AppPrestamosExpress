@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Rutas API ────────────────────────────────────────────────
 app.use('/api/marcas', verifyToken, require('./routes/marcas'));
+app.use('/api/categorias', verifyToken, require('./routes/categorias'));
 app.use('/api/tipo-herramientas', verifyToken, require('./routes/tipo_herramientas'));
 app.use('/api/modelos', verifyToken, require('./routes/modelos'));
 app.use('/api/usuarios', verifyToken, require('./routes/usuarios'));
