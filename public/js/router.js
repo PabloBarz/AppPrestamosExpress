@@ -47,6 +47,11 @@ const ROUTES = {
     view: "/views/login.html",
     module: () => LoginModule,
   },
+  usuarios: {
+    title: "Usuarios",
+    view: "/views/usuarios.html",
+    module: ()=>UsuariosModule,
+  },
 };
 
 /* ════════════════════════════════════════════
@@ -72,12 +77,12 @@ const Router = {
 
     if (page === "login") {
       sidebar.style.display = "none";
-      main.style.marginLeft = "0"; 
+      main.style.marginLeft = "0";
       document.body.style.overflow = "hidden";
     } else {
       sidebar.style.display = "block";
-      main.style.marginLeft = ""; 
-      document.body.style.overflow = ""; 
+      main.style.marginLeft = "";
+      document.body.style.overflow = "";
     }
 
     const token = localStorage.getItem("token");

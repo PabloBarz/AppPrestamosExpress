@@ -1,0 +1,141 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Usuarios</h1>
+    <p class="page-subtitle">Gestión de usuarios del sistema</p>
+  </div>
+
+  <button class="btn-primary-action" id="btnNuevoUsuario">
+    <i class="bi bi-plus-lg"></i> Nuevo usuario
+  </button>
+</div>
+
+<div class="search-bar-row">
+  <div class="search-input-wrap">
+    <i class="bi bi-search search-icon"></i>
+    <input
+      type="text"
+      id="searchUsuario"
+      class="search-input"
+      placeholder="Buscar usuario..."
+    />
+  </div>
+  <select id="filterEstado" class="filter-select">
+    <option value="Activo">Activos</option>
+    <option value="Inactivo">Inactivos</option>
+  </select>
+</div>
+
+<div class="card-panel">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody id="bodyUsuarios">
+        <tr>
+          <td colspan="5" class="text-center py-5">
+            <div class="spinner-custom"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <span id="totalUsuariosLabel">Cargando...</span>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modalUsuarioOverlay">
+  <div class="modal-panel">
+
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom" id="modalUsuarioTitle">
+          Nuevo Usuario
+        </div>
+        <div class="modal-subtitle">
+          Ingresa los datos del usuario
+        </div>
+      </div>
+
+      <button class="btn-modal-close" id="btnCloseModalUsuario">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <form id="formUsuario" novalidate>
+
+        <input type="hidden" id="usuarioId" />
+
+        <!-- NOMBRE -->
+        <label class="form-label-custom">Nombre <span class="required">*</span></label>
+        <input type="text" id="uNombre" class="input-custom" placeholder="Ej: Roberto" required />
+        <div class="field-error" id="err-uNombre"></div>
+
+        <!-- APELLIDOS -->
+        <label class="form-label-custom mt-3">Apellidos <span class="required">*</span></label>
+        <input type="text" id="uApellidos" class="input-custom" placeholder="Ej: Perez Lopez" required />
+        <div class="field-error" id="err-uApellidos"></div>
+
+        <!-- DNI -->
+        <label class="form-label-custom mt-3">DNI <span class="required">*</span></label>
+        <input type="text" id="uDoc" class="input-custom" placeholder="Ej: 12345678" />
+        <div class="field-error" id="err-uDoc"></div>
+
+        <!-- TELEFONO -->
+        <label class="form-label-custom mt-3">Teléfono</label>
+        <input type="text" id="uTelefono" class="input-custom" placeholder="Ej: 987654321" />
+
+        <!-- FECHA -->
+        <label class="form-label-custom mt-3">Fecha de nacimiento</label>
+        <input type="date" id="uFecha" class="input-custom" />
+
+        <!-- USUARIO -->
+        <label class="form-label-custom mt-3">Usuario <span class="required">*</span></label>
+        <input type="text" id="uUser" class="input-custom" placeholder="Ej: admin" required />
+        <div class="field-error" id="err-uUser"></div>
+
+        <!-- PASSWORD -->
+        <div id="passwordGroup">
+          <label class="form-label-custom mt-3">Contraseña <span class="required">*</span></label>
+          <input type="password" id="uPass" class="input-custom" />
+          <div class="field-error" id="err-uPass"></div>
+        </div>
+
+        <!-- ROL -->
+        <label class="form-label-custom mt-3">Rol</label>
+        <select id="uRol" class="input-custom">
+          <option value="1">Administrador</option>
+          <option value="2">Almacen</option>
+          <option value="3">Trabajador</option>
+        </select>
+
+      </form>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" id="btnCancelUsuario">Cancelar</button>
+
+      <button class="btn-save" id="btnSaveUsuario">
+        <span id="btnSaveUsuarioText">
+          <i class="bi bi-check-lg me-1"></i> Guardar
+        </span>
+        <span id="btnSaveUsuarioSpinner" class="d-none">
+          <div class="spinner-sm"></div>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</div>
