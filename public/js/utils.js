@@ -9,9 +9,26 @@
    HTTP HELPER
 ════════════════════════════════════════════ */
 async function http(url, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  const token = localStorage.getItem('token');
+
+  const opts = { method, headers: { 
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}`})
+  } };
+
   if (body) opts.body = JSON.stringify(body);
   const res  = await fetch(url, opts);
+
+  // MANEJO DE TOKEN EXPIRADO
+  if (res.status === 401) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    Router.navigateTo('login');
+
+    throw new Error('Sesión expirada');
+  }
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
   return data;

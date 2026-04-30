@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-
+const verifyToken = require('./middlewares/auth');
 const cors = require('cors');
 const path = require('path');
 
@@ -16,9 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Rutas API ────────────────────────────────────────────────
-app.use('/api/marcas', require('./routes/marcas'));
-app.use('/api/tipo-herramientas', require('./routes/tipo_herramientas')); 
-app.use('/api/modelos', require('./routes/modelos'));
+app.use('/api/marcas', verifyToken, require('./routes/marcas'));
+app.use('/api/tipo-herramientas', verifyToken, require('./routes/tipo_herramientas'));
+app.use('/api/modelos', verifyToken, require('./routes/modelos'));
 app.use('/api/auth', require('./routes/auth'));
 
 // 3. SPA: redirigir todo al index.html
