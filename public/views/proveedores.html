@@ -1,0 +1,118 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Proveedores</h1>
+    <p class="page-subtitle">Gestiona los proveedores del sistema</p>
+  </div>
+
+  <button class="btn-primary-action" id="btnNuevoProveedor">
+    <i class="bi bi-plus-lg"></i> Nuevo proveedor
+  </button>
+</div>
+
+<div class="search-bar-row">
+  <div class="search-input-wrap">
+    <i class="bi bi-search search-icon"></i>
+    <input
+      type="text"
+      id="searchProveedor"
+      class="search-input"
+      placeholder="Buscar proveedor..."
+    />
+  </div>
+
+  <select id="filterEstadoProveedor" class="filter-select">
+    <option value="Activo">Activos</option>
+    <option value="Inactivo">Inactivos</option>
+  </select>
+</div>
+
+<div class="card-panel">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Razón social</th>
+          <th>RUC</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody id="bodyProveedores">
+        <tr>
+          <td colspan="7" class="text-center py-5">
+            <div class="spinner-custom"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <span id="totalProveedoresLabel">Cargando...</span>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalProveedorOverlay">
+  <div class="modal-panel">
+
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom" id="modalProveedorTitle">
+          Nuevo proveedor
+        </div>
+        <div class="modal-subtitle">
+          Ingresa los datos del proveedor
+        </div>
+      </div>
+
+      <button class="btn-modal-close" id="btnCloseModalProveedor">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <form id="formProveedor" novalidate>
+
+        <input type="hidden" id="proveedorId" />
+
+        <label class="form-label-custom">Razón social <span class="required">*</span></label>
+        <input type="text" id="pRazon" class="input-custom" maxlength="150" />
+        <div class="field-error" id="err-pRazon"></div>
+
+        <label class="form-label-custom mt-3">RUC <span class="required">*</span></label>
+        <input type="text" id="pRuc" class="input-custom" maxlength="11" />
+        <div class="field-error" id="err-pRuc"></div>
+
+        <label class="form-label-custom mt-3">Teléfono</label>
+        <input type="text" id="pTelefono" class="input-custom" maxlength="20" />
+
+        <label class="form-label-custom mt-3">Dirección</label>
+        <input type="text" id="pDireccion" class="input-custom" maxlength="150" />
+
+        <label class="form-label-custom mt-3">Email</label>
+        <input type="email" id="pEmail" class="input-custom" maxlength="120" />
+        <div class="field-error" id="err-pEmail"></div>
+
+      </form>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" id="btnCancelProveedor">Cancelar</button>
+
+      <button class="btn-save" id="btnSaveProveedor">
+        <span id="btnSaveProveedorText">
+          <i class="bi bi-check-lg me-1"></i> Guardar
+        </span>
+        <span id="btnSaveProveedorSpinner" class="d-none">
+          <div class="spinner-sm"></div>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</div>

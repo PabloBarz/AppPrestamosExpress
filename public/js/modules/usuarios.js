@@ -81,7 +81,7 @@ const UsuariosModule = {
                 <button class="btn-action btn-action-edit"
                   onclick='UsuariosModule._openModalEdit(${JSON.stringify(u)})'>
                   <i class="bi bi-pencil-fill"></i>
-                </button>
+                </button> 
 
                 <button class="btn-action btn-action-delete"
                   onclick="UsuariosModule._confirmToggle(${u.id_usuario}, '${u.estado}', \`${u.nombre}\`)">

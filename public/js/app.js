@@ -10,6 +10,7 @@ const AppState = {
   modelos: [],
   tiposHerramienta: [],
   usuarios: [],
+  proveedores: [],
   deleteTarget: { type: null, id: null, name: null, onConfirm: null },
 };
 
@@ -76,6 +77,17 @@ const DeleteModal = {
       message = `¿Deseas ${
         isActivo ? "eliminar" : "reactivar"
       } al usuario "<strong>${escapeHtml(name)}</strong>"?`;
+    
+    } else if (type === "proveedor") {
+      const isActivo = String(estado).trim().toLowerCase() === "activo";
+
+      btnText.innerHTML = isActivo
+        ? `<i class="bi bi-trash-fill me-1"></i> Eliminar`
+        : `<i class="bi bi-arrow-clockwise me-1"></i> Reactivar`;
+
+      message = `¿Deseas ${
+        isActivo ? "eliminar" : "reactivar"
+      } al proveedor "<strong>${escapeHtml(name)}</strong>"?`;
     } else {
       const msgs = {
         marca: `¿Eliminar la marca "<strong>${escapeHtml(name)}</strong>"?`,
@@ -105,21 +117,25 @@ function updateBadges() {
   setText("badge-marcas", AppState.marcas.length);
   setText("badge-tipos-herramienta", AppState.tiposHerramienta.length);
   setText("badge-usuarios", AppState.usuarios.length);
+  setText("badge-proveedores", AppState.proveedores.length);
 }
 
 async function loadCatalogData() {
   try {
-    const [marcasRes, tiposRes, modelosRes, usuariosRes] = await Promise.all([
-      http("/api/marcas"),
-      http("/api/tipo-herramientas"),
-      http("/api/modelos"),
-      http("/api/usuarios?estado=Activo"),
-    ]);
+    const [marcasRes, tiposRes, modelosRes, usuariosRes, proveedoresRes] =
+      await Promise.all([
+        http("/api/marcas"),
+        http("/api/tipo-herramientas"),
+        http("/api/modelos"),
+        http("/api/usuarios?estado=Activo"),
+        http("/api/proveedores?estado=Activo"),
+      ]);
 
     AppState.marcas = marcasRes.data;
     AppState.tiposHerramienta = tiposRes.data;
     AppState.modelos = modelosRes.data;
     AppState.usuarios = usuariosRes.data;
+    AppState.proveedores = proveedoresRes.data;
     updateBadges();
   } catch (e) {
     showToast("Error al cargar datos iniciales: " + e.message, "error");

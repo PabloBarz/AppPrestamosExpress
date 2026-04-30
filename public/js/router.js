@@ -50,8 +50,13 @@ const ROUTES = {
   usuarios: {
     title: "Usuarios",
     view: "/views/usuarios.html",
-    module: ()=>UsuariosModule,
+    module: ()=> UsuariosModule,
   },
+  proveedores: {
+  title: "Proveedores",
+  view: "views/proveedores.html",
+  module: () => ProveedoresModule,
+}
 };
 
 /* ════════════════════════════════════════════
