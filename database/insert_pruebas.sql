@@ -168,3 +168,6 @@ INSERT INTO usuarios (id_persona, id_rol, user_name, contrasena) VALUES
 (1, 1, 'admin', '$2b$10$Gaxbj.xyKb09yRQsaM7HMufecCzUfL/X8K/koXzHpj5ws1ktT8rwW'),
 (2, 2, 'almacen1', '$2b$10$Gaxbj.xyKb09yRQsaM7HMufecCzUfL/X8K/koXzHpj5ws1ktT8rwW'),
 (3, 3, 'trabajador1', '$2b$10$Gaxbj.xyKb09yRQsaM7HMufecCzUfL/X8K/koXzHpj5ws1ktT8rwW');
+
+/* user_name = admin
+ contrasena = 123456*/

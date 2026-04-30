@@ -9,6 +9,7 @@ const AppState = {
   marcas: [],
   modelos: [],
   tiposHerramienta: [],
+  categorias: [],
   usuarios: [],
   proveedores: [],
   deleteTarget: { type: null, id: null, name: null, onConfirm: null },
@@ -93,6 +94,7 @@ const DeleteModal = {
         marca: `¿Eliminar la marca "<strong>${escapeHtml(name)}</strong>"?`,
         modelo: `¿Eliminar el modelo "<strong>${escapeHtml(name)}</strong>"?`,
         tipoHerramienta: `¿Eliminar el tipo "<strong>${escapeHtml(name)}</strong>"?`,
+        categoria: `¿Eliminar la categoría "<strong>${escapeHtml(name)}</strong>"?`,
       };
 
       message = msgs[type] || message;
@@ -118,6 +120,7 @@ function updateBadges() {
   setText("badge-tipos-herramienta", AppState.tiposHerramienta.length);
   setText("badge-usuarios", AppState.usuarios.length);
   setText("badge-proveedores", AppState.proveedores.length);
+  setText("badge-categorias", AppState.categorias.length);
 }
 
 async function loadCatalogData() {
@@ -129,6 +132,7 @@ async function loadCatalogData() {
         http("/api/modelos"),
         http("/api/usuarios?estado=Activo"),
         http("/api/proveedores?estado=Activo"),
+        http("/api/categorias"),
       ]);
 
     AppState.marcas = marcasRes.data;
@@ -136,6 +140,7 @@ async function loadCatalogData() {
     AppState.modelos = modelosRes.data;
     AppState.usuarios = usuariosRes.data;
     AppState.proveedores = proveedoresRes.data;
+    AppState.categorias = categoriasRes.data;
     updateBadges();
   } catch (e) {
     showToast("Error al cargar datos iniciales: " + e.message, "error");
