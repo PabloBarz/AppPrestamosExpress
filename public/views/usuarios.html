@@ -12,12 +12,7 @@
 <div class="search-bar-row">
   <div class="search-input-wrap">
     <i class="bi bi-search search-icon"></i>
-    <input
-      type="text"
-      id="searchUsuario"
-      class="search-input"
-      placeholder="Buscar usuario..."
-    />
+    <input type="text" id="searchUsuario" class="search-input" placeholder="Buscar usuario..." />
   </div>
   <select id="filterEstado" class="filter-select">
     <option value="Activo">Activos</option>
@@ -78,33 +73,38 @@
 
         <input type="hidden" id="usuarioId" />
 
-        <!-- NOMBRE -->
-        <label class="form-label-custom">Nombre <span class="required">*</span></label>
-        <input type="text" id="uNombre" class="input-custom" placeholder="Ej: Roberto" required />
-        <div class="field-error" id="err-uNombre"></div>
+        <div id="grupoPersona">
 
-        <!-- APELLIDOS -->
-        <label class="form-label-custom mt-3">Apellidos <span class="required">*</span></label>
-        <input type="text" id="uApellidos" class="input-custom" placeholder="Ej: Perez Lopez" required />
-        <div class="field-error" id="err-uApellidos"></div>
+          <!-- NOMBRE -->
+          <label class="form-label-custom">Nombre <span class="required">*</span></label>
+          <input type="text" id="uNombre" class="input-custom" placeholder="Ej: Roberto" required />
+          <div class="field-error" id="err-uNombre"></div>
 
-        <!-- DNI -->
-        <label class="form-label-custom mt-3">DNI <span class="required">*</span></label>
-        <input type="text" id="uDoc" class="input-custom" placeholder="Ej: 12345678" />
-        <div class="field-error" id="err-uDoc"></div>
+          <!-- APELLIDOS -->
+          <label class="form-label-custom mt-3">Apellidos <span class="required">*</span></label>
+          <input type="text" id="uApellidos" class="input-custom" placeholder="Ej: Perez Lopez" required />
+          <div class="field-error" id="err-uApellidos"></div>
 
-        <!-- TELEFONO -->
-        <label class="form-label-custom mt-3">Teléfono</label>
-        <input type="text" id="uTelefono" class="input-custom" placeholder="Ej: 987654321" />
+          <!-- DNI -->
+          <label class="form-label-custom mt-3">DNI <span class="required">*</span></label>
+          <input type="text" id="uDoc" class="input-custom" placeholder="Ej: 12345678" />
+          <div class="field-error" id="err-uDoc"></div>
 
-        <!-- FECHA -->
-        <label class="form-label-custom mt-3">Fecha de nacimiento</label>
-        <input type="date" id="uFecha" class="input-custom" />
+          <!-- TELEFONO -->
+          <label class="form-label-custom mt-3">Teléfono</label>
+          <input type="text" id="uTelefono" class="input-custom" placeholder="Ej: 987654321" />
 
-        <!-- USUARIO -->
-        <label class="form-label-custom mt-3">Usuario <span class="required">*</span></label>
-        <input type="text" id="uUser" class="input-custom" placeholder="Ej: admin" required />
-        <div class="field-error" id="err-uUser"></div>
+          <!-- FECHA -->
+          <label class="form-label-custom mt-3">Fecha de nacimiento</label>
+          <input type="date" id="uFecha" class="input-custom" />
+
+          </div>
+
+          <!-- USUARIO -->
+          <label class="form-label-custom mt-3">Usuario <span class="required">*</span></label>
+          <input type="text" id="uUser" class="input-custom" placeholder="Ej: admin" required />
+          <div class="field-error" id="err-uUser"></div>
+
 
         <!-- PASSWORD -->
         <div id="passwordGroup">

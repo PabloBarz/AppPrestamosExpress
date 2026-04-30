@@ -13,6 +13,7 @@ router.get("/", authorizeRoles("Administrador"), async (req, res) => {
         u.id_usuario,
         u.user_name,
         u.estado,
+        u.id_rol,
         r.nombre AS rol,
         p.nombre,
         p.apellidos,
@@ -54,6 +55,13 @@ router.post("/", authorizeRoles("Administrador"), async (req, res) => {
     contrasena,
     id_rol,
   } = req.body;
+
+  if (!tipodoc || !doc || !nombre || !apellidos || !user_name || !contrasena || !id_rol) {
+    return res.status(400).json({
+      success: false,
+      message: "Todos los campos obligatorios son requeridos",
+    });
+  }
 
   try {
     //  1. Buscar si persona ya existe
@@ -128,37 +136,48 @@ router.post("/", authorizeRoles("Administrador"), async (req, res) => {
   }
 });
 
-// 🔥 PUT - EDITAR USUARIO (SIN CONTRASEÑA)
+//  PUT - EDITAR USUARIO (SIN CONTRASEÑA)
 router.put("/:id", authorizeRoles("Administrador"), async (req, res) => {
-  const { nombre, apellidos, user_name, id_rol } = req.body;
+  const { user_name, id_rol } = req.body;
+
+  if (!user_name || !id_rol) {
+    return res.status(400).json({
+      success: false,
+      message: "Usuario y rol son obligatorios",
+    });
+  }
 
   try {
-    // actualizar persona
-    await db.query(
-      `
-      UPDATE personas p
-      INNER JOIN usuarios u ON p.id_persona = u.id_persona
-      SET p.nombre = ?, p.apellidos = ?
-      WHERE u.id_usuario = ?
-    `,
-      [nombre, apellidos, req.params.id],
-    );
-
     // actualizar usuario
-    await db.query(
+    const [result] = await db.query(
       `
       UPDATE usuarios 
       SET user_name = ?, id_rol = ?
       WHERE id_usuario = ?
     `,
-      [user_name, id_rol, req.params.id],
+      [user_name, id_rol, req.params.id]
     );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+      });
+    }
 
     res.json({
       success: true,
       message: "Usuario actualizado correctamente",
     });
   } catch (err) {
+
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(400).json({
+        success: false,
+        message: "El nombre de usuario ya existe",
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Error al actualizar usuario",
@@ -166,7 +185,7 @@ router.put("/:id", authorizeRoles("Administrador"), async (req, res) => {
   }
 });
 
-// 🔥 PUT - ACTIVAR / DESACTIVAR (NO ELIMINAR)
+//  PUT - ACTIVAR / DESACTIVAR (NO ELIMINAR)
 router.put("/:id/estado", authorizeRoles("Administrador"), async (req, res) => {
   const { estado } = req.body;
 

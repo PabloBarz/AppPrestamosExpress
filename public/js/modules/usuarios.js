@@ -16,10 +16,10 @@ const UsuariosModule = {
       this.data = res.data;
       this._render(this.data);
 
-      
-        AppState.usuarios = this.data;
-        updateBadges();
-      
+
+      AppState.usuarios = this.data;
+      updateBadges();
+
     } catch (e) {
       showToast("Error al cargar usuarios", "error");
     }
@@ -75,9 +75,8 @@ const UsuariosModule = {
         </td>
 
         <td>
-          ${
-            u.estado === "Activo"
-              ? `
+          ${u.estado === "Activo"
+            ? `
                 <button class="btn-action btn-action-edit"
                   onclick='UsuariosModule._openModalEdit(${JSON.stringify(u)})'>
                   <i class="bi bi-pencil-fill"></i>
@@ -88,7 +87,7 @@ const UsuariosModule = {
                   <i class="bi bi-person-x-fill"></i>
                 </button>
               `
-              : `
+            : `
                 <button class="btn-action btn-action-success"
                   onclick="UsuariosModule._confirmToggle(${u.id_usuario}, '${u.estado}', \`${u.nombre}\`)">
                   <i class="bi bi-person-check-fill"></i>
@@ -115,7 +114,7 @@ const UsuariosModule = {
       .getElementById("filterEstado")
       ?.addEventListener("change", () => this.load());
 
-    // 🔥 MODAL EVENTS
+    //  MODAL EVENTS
     document
       .getElementById("btnCloseModalUsuario")
       ?.addEventListener("click", () => closeOverlay("modalUsuarioOverlay"));
@@ -141,58 +140,116 @@ const UsuariosModule = {
     this._render(filtered);
   },
 
-  // 🔥 ABRIR MODAL CREAR
+  //  ABRIR MODAL CREAR
   _openModal() {
     document.getElementById("modalUsuarioTitle").textContent = "Nuevo Usuario";
     document.getElementById("formUsuario").reset();
     document.getElementById("usuarioId").value = "";
 
     document.getElementById("passwordGroup").style.display = "block";
+    document.getElementById("grupoPersona").style.display = "block"; 
+
+    clearErrors([
+      "uNombre",
+      "uApellidos",
+      "uDoc",
+      "uUser",
+      "uPass"
+    ]);
 
     openOverlay("modalUsuarioOverlay");
   },
 
-  // 🔥 EDITAR
+  //  EDITAR
   _openModalEdit(u) {
     document.getElementById("modalUsuarioTitle").textContent = "Editar Usuario";
 
     document.getElementById("usuarioId").value = u.id_usuario;
-    document.getElementById("uNombre").value = u.nombre;
-    document.getElementById("uApellidos").value = u.apellidos;
     document.getElementById("uUser").value = u.user_name;
     document.getElementById("uRol").value = u.id_rol;
 
     document.getElementById("passwordGroup").style.display = "none";
+    document.getElementById("grupoPersona").style.display = "none";
+
+    clearErrors([
+    "uNombre",
+    "uApellidos",
+    "uDoc",
+    "uUser",
+    "uPass"
+  ]);
 
     openOverlay("modalUsuarioOverlay");
   },
 
-  // 🔥 GUARDAR
+  //  GUARDAR
   async _save() {
     const id = document.getElementById("usuarioId").value;
 
+    clearErrors([
+      "uNombre",
+      "uApellidos",
+      "uDoc",
+      "uUser",
+      "uPass"
+    ]);
+
+    const nombre = uNombre.value.trim();
+    const apellidos = uApellidos.value.trim();
+    const doc = uDoc.value.trim();
+    const user = uUser.value.trim();
+    const pass = uPass.value.trim();
+
+
+    let isValid = true;
+
+    if (!nombre) {
+      setError("uNombre", "err-uNombre", "El nombre es requerido");
+      isValid = false;
+    }
+
+    if (!apellidos) {
+      setError("uApellidos", "err-uApellidos", "Los apellidos son requeridos");
+      isValid = false;
+    }
+
+    if (!doc && !id) {
+      setError("uDoc", "err-uDoc", "El DNI es requerido");
+      isValid = false;
+    }
+
+    if (!user) {
+      setError("uUser", "err-uUser", "El usuario es requerido");
+      isValid = false;
+    }
+
+    if (!id && !pass) {
+      setError("uPass", "err-uPass", "La contraseña es requerida");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
     try {
       if (id) {
-        // EDITAR
         await http(`/api/usuarios/${id}`, "PUT", {
-          nombre: uNombre.value,
-          apellidos: uApellidos.value,
-          user_name: uUser.value,
+          nombre,
+          apellidos,
+          user_name: user,
           id_rol: uRol.value,
         });
 
         showToast("Usuario actualizado");
       } else {
-        // CREAR
         await http("/api/usuarios", "POST", {
           tipodoc: "DNI",
-          doc: uDoc.value,
-          nombre: uNombre.value,
-          apellidos: uApellidos.value,
+          doc,
+          nombre,
+          apellidos,
           telefono: uTelefono.value || null,
           fecha_nac: uFecha.value || null,
-          user_name: uUser.value,
-          contrasena: uPass.value,
+          user_name: user,
+          contrasena: pass,
           id_rol: uRol.value,
         });
 
@@ -201,6 +258,7 @@ const UsuariosModule = {
 
       closeOverlay("modalUsuarioOverlay");
       this.load();
+
     } catch (e) {
       showToast(e.message, "error");
     }
