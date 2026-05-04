@@ -190,7 +190,7 @@ CREATE TABLE modelos (
 -- =========================
 DROP TABLE IF EXISTS compras;
 CREATE TABLE compras (
-    id_compras INT AUTO_INCREMENT PRIMARY KEY,
+    id_compra INT AUTO_INCREMENT PRIMARY KEY,
     id_proveedor INT NOT NULL,
     id_usuario INT NOT NULL,
     fecha_compra DATE NOT NULL,
@@ -213,7 +213,7 @@ CREATE TABLE compras (
 DROP TABLE IF EXISTS detalle_compras;
 CREATE TABLE detalle_compras (
     id_detalle_compras INT AUTO_INCREMENT PRIMARY KEY,
-    id_compras INT NOT NULL,
+    id_compra INT NOT NULL,
     id_modelo INT NOT NULL,
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(10,2) NOT NULL,
@@ -224,8 +224,8 @@ CREATE TABLE detalle_compras (
     CONSTRAINT ck_precio CHECK (precio_unitario > 0),
     CONSTRAINT ck_subtotal CHECK (subtotal >= 0),
     CONSTRAINT ck_cantidad CHECK (cantidad > 0),
-    CONSTRAINT uq_id_compras_id_modelo UNIQUE(id_compras, id_modelo),
-    CONSTRAINT fk_detalle_compras_compras FOREIGN KEY (id_compras) REFERENCES compras(id_compras),
+    CONSTRAINT uq_id_compras_id_modelo UNIQUE(id_compra, id_modelo),
+    CONSTRAINT fk_detalle_compras_compras FOREIGN KEY (id_compra) REFERENCES compras(id_compra),
     CONSTRAINT fk_detalle_compras_modelos FOREIGN KEY (id_modelo) REFERENCES modelos(id_modelo)
 ) ENGINE=InnoDB;
 
@@ -260,11 +260,11 @@ CREATE TABLE prestamos (
     id_colaborador INT NOT NULL,
     id_usuario_prestamo INT NOT NULL,
     motivo_uso TEXT NULL,
-    fecha_prestamo DATE NOT NULL,
+    fecha_prestamo DATE NOT NULL DEFAULT (CURRENT_DATE),
     area_uso VARCHAR(100) NOT NULL,
     firma VARCHAR(255) NULL,
     observacion TEXT NULL,
-    estado ENUM('Activo','Finalizado','Pendiente') NOT NULL DEFAULT 'Activo',
+    estado ENUM('Activo','Finalizado') NOT NULL DEFAULT 'Activo',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -284,7 +284,7 @@ CREATE TABLE detalle_prestamos (
     hora_prestamo DATETIME NOT NULL,
     hora_devolucion_esperada DATETIME NULL,
     hora_devolucion_final DATETIME NULL,
-    estado ENUM('Prestado','Devuelto','Retrasado') NOT NULL DEFAULT 'Prestado',
+    estado ENUM('Prestado','Devuelto','Vencido') NOT NULL DEFAULT 'Prestado',
     estado_devolucion ENUM('Bueno','Regular','Danado','Incompleto') NULL,
     observaciones_devolucion TEXT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
