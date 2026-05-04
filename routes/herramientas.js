@@ -121,8 +121,21 @@ router.post('/', authorizeRoles('Administrador'), async (req, res) => {
     });
   }
 
+  
   try {
-
+    // validar código duplicado también
+      const [existeCodigo] = await db.query(
+        'SELECT id_herramienta FROM herramientas WHERE codigo = ?',
+        [codigo.trim()]
+      );
+  
+      if (existeCodigo.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'El código ya existe'
+        });
+      }
+    
     //  Validar duplicado por número de serie
     const [existeSerie] = await db.query(
       'SELECT id_herramienta FROM herramientas WHERE numero_serie = ?',
@@ -184,18 +197,19 @@ router.put('/:id', authorizeRoles('Administrador'), async (req, res) => {
     codigoqr
   } = req.body;
 
-  if (!id_modelo || !codigo || !numero_serie) {
-    return res.status(400).json({
-      success: false,
-      message: 'Modelo, código y número de serie son obligatorios'
-    });
-  }
+  // solo validar en creación lógica (no en edición completa)
+    if (ubicacion === undefined && codigoqr === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Debe enviar al menos ubicación o QR'
+      });
+    }
 
   try {
 
     //  No permitir editar si está prestado
     const [[herr]] = await db.query(
-      'SELECT estado FROM herramientas WHERE id_herramienta = ?',
+    'SELECT estado, ubicacion, codigoqr FROM herramientas WHERE id_herramienta = ?',
       [req.params.id]
     );
 
@@ -213,23 +227,24 @@ router.put('/:id', authorizeRoles('Administrador'), async (req, res) => {
       });
     }
 
+    if (ubicacion === herr.ubicacion && codigoqr === herr.codigoqr) {
+      return res.status(400).json({
+        success: false,
+        message: 'No hay cambios para actualizar'
+      });
+    }
+
     await db.query(`
       UPDATE herramientas
       SET 
-        id_modelo = ?,
-        codigo = ?,
-        numero_serie = ?,
         ubicacion = ?,
         codigoqr = ?
       WHERE id_herramienta = ?
     `, [
-      id_modelo,
-      codigo.trim(),
-      numero_serie.trim(),
-      ubicacion || null,
-      codigoqr || null,
-      req.params.id
-    ]);
+        ubicacion || null,
+        codigoqr || null,
+        req.params.id
+      ]);
 
     res.json({
       success: true,

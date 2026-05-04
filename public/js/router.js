@@ -62,6 +62,11 @@ const ROUTES = {
     view: "/views/categorias.html",
     module: () => CategoriasModule,
   },
+  herramientas: {
+    title: "Herramientas",
+    view: "/views/herramientas.html",
+    module: () => HerramientasModule,
+  },  
 };
 
 /* ════════════════════════════════════════════

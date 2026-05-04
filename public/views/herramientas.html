@@ -1,0 +1,127 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Herramientas</h1>
+    <p class="page-subtitle">Inventario físico de herramientas</p>
+  </div>
+
+  <button class="btn-primary-action" id="btnNuevaHerramienta">
+    <i class="bi bi-plus-lg"></i> Nueva Herramienta
+  </button>
+</div>
+
+<div class="search-bar-row">
+  <div class="search-input-wrap">
+    <i class="bi bi-search search-icon"></i>
+    <input type="text" id="searchHerramienta" class="search-input" placeholder="Buscar código, modelo..." />
+  </div>
+
+  <button class="btn-icon-outline" id="btnRefreshHerramientas">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+
+  <select id="filterEstado" class="input-custom" style="max-width:200px">
+      <option value="">Todos</option>
+      <option value="Disponible">Disponibles</option>
+      <option value="Prestado">Prestados</option>
+      <option value="Mantenimiento">Mantenimiento</option>
+      <option value="Danado">Dañados</option>
+      <option value="Perdido">Perdidos</option>
+    </select>
+</div>
+
+<div class="card-panel">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Código</th>
+          <th>Modelo</th>
+          <th>Marca</th>
+          <th>Tipo</th>
+          <th>Categoría</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody id="bodyHerramientas">
+        <tr>
+          <td colspan="8" class="text-center py-5">
+            <div class="spinner-custom"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <span id="totalHerramientasLabel">Cargando...</span>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalHerramientaOverlay">
+  <div class="modal-panel modal-sm">
+
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom" id="modalHerramientaTitle">Nueva Herramienta</div>
+        <div class="modal-subtitle">Registrar herramienta</div>
+      </div>
+      <button class="btn-modal-close" id="btnCloseModalHerramienta">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <input type="hidden" id="herramientaId">
+
+      <label>Modelo *</label>
+      <select id="hModelo" class="input-custom"></select>
+
+      <label class="mt-2">Código *</label>
+      <input type="text" id="hCodigo" class="input-custom" disabled placeholder="Se genera automáticamente">
+
+      <label class="mt-2">Número de serie *</label>
+      <input type="text" id="hSerie" class="input-custom">
+
+      <label class="mt-2">Ubicación</label>
+      <input type="text" id="hUbicacion" class="input-custom">
+
+      <label class="mt-2">QR</label>
+      <input type="text" id="hQr" class="input-custom">
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" id="btnCancelHerramienta">Cancelar</button>
+      <button class="btn-save" id="btnSaveHerramienta">Guardar</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalEstadoOverlay">
+  <div class="modal-panel modal-sm">
+
+    <div class="modal-header-custom">
+      <div class="modal-title-custom">Cambiar Estado</div>
+    </div>
+
+    <div class="modal-body-custom">
+      <input type="hidden" id="estadoHerramientaId">
+
+      <label>Estado</label>
+      <select id="nuevoEstado" class="input-custom">
+        <option value="Disponible">Disponible</option>
+        <option value="Mantenimiento">Mantenimiento</option>
+      </select>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" onclick="closeOverlay('modalEstadoOverlay')">Cancelar</button>
+      <button class="btn-save" id="btnGuardarEstado">Guardar</button>
+    </div>
+
+  </div>
+</div>

@@ -22,6 +22,7 @@ app.use('/api/tipo-herramientas', verifyToken, require('./routes/tipo_herramient
 app.use('/api/modelos', verifyToken, require('./routes/modelos'));
 app.use('/api/usuarios', verifyToken, require('./routes/usuarios'));
 app.use('/api/proveedores', verifyToken, require('./routes/proveedores'));
+app.use('/api/herramientas', verifyToken, require('./routes/herramientas'));
 app.use('/api/auth', require('./routes/auth'));
 
 // 3. SPA: redirigir todo al index.html
