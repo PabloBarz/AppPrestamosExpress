@@ -3,6 +3,9 @@
     <h1 class="page-title" id="tituloModelos">Modelos</h1>
     <p class="page-subtitle" id="subtituloModelos">Listado de modelos</p>
   </div>
+  <button class="btn-primary-action" id="btnNuevoModelo">
+    <i class="bi bi-plus-lg"></i> Nuevo Modelo
+  </button>
 </div>
 
 <div class="search-bar-row">
@@ -30,12 +33,14 @@
           <th>Modelo</th>
           <th>Marca</th>
           <th>Tipo</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
       <tbody id="bodyModelos">
         <tr>
-          <td colspan="4" class="text-center py-5">
+          <td colspan="5" class="text-center py-5">
             <div class="spinner-custom"></div>
           </td>
         </tr>
@@ -47,5 +52,43 @@
     <span class="text-muted text-sm" id="totalModelosLabel">
       Cargando...
     </span>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalModeloOverlay">
+  <div class="modal-panel modal-sm">
+
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom" id="modalModeloTitle">Nuevo Modelo</div>
+        <div class="modal-subtitle">Ingresa los datos del modelo</div>
+      </div>
+      <button class="btn-modal-close" id="btnCloseModalModelo">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <form id="formModelo">
+
+        <input type="hidden" id="modeloId" />
+
+        <label class="form-label-custom">Marca *</label>
+        <select id="mMarca" class="input-custom"></select>
+
+        <label class="form-label-custom mt-2">Tipo *</label>
+        <select id="mTipo" class="input-custom"></select>
+
+        <label class="form-label-custom mt-2">Modelo *</label>
+        <input type="text" id="mModelo" class="input-custom" />
+
+      </form>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" id="btnCancelModelo">Cancelar</button>
+      <button class="btn-save" id="btnSaveModelo">Guardar</button>
+    </div>
+
   </div>
 </div>

@@ -118,6 +118,7 @@ const DeleteModal = {
 function updateBadges() {
   setText("badge-marcas", AppState.marcas.length);
   setText("badge-tipos-herramienta", AppState.tiposHerramienta.length);
+  setText("badge-modelos", AppState.modelos.length);
   setText("badge-usuarios", AppState.usuarios.length);
   setText("badge-proveedores", AppState.proveedores.length);
   setText("badge-categorias", AppState.categorias.length);
@@ -125,7 +126,7 @@ function updateBadges() {
 
 async function loadCatalogData() {
   try {
-    const [marcasRes, tiposRes, modelosRes, usuariosRes, proveedoresRes] =
+    const [marcasRes, tiposRes, modelosRes, usuariosRes, proveedoresRes, categoriasRes] =
       await Promise.all([
         http("/api/marcas"),
         http("/api/tipo-herramientas"),
