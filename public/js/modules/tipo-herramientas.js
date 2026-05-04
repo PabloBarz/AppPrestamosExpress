@@ -9,10 +9,16 @@ const TipoHerramientasModule = {
 
   async init() {
     this._bindEvents();
+    this.params = Router.currentParams || {};
     await this.load();
   },
 
   async load() {
+
+    if (this.params?.nombre) {
+      setText("topbarTitle", `Tipos - ${this.params.nombre}`);
+    }
+
     document.getElementById('bodyTiposHerramienta').innerHTML =
       `<tr><td colspan="5" class="text-center py-5"><div class="spinner-custom"></div></td></tr>`;
 
@@ -25,7 +31,16 @@ const TipoHerramientasModule = {
       AppState.tiposHerramienta = tiposRes.data;
       AppState.modelos = modelosRes.data;
 
-      this._render(AppState.tiposHerramienta);
+      let lista = AppState.tiposHerramienta;
+
+      // FILTRO POR CATEGORIA
+      if (this.params?.id_categoria) {
+        lista = lista.filter(
+          t => Number(t.id_categoria) === Number(this.params.id_categoria)
+        );
+      }
+
+      this._render(lista);
       updateBadges();
     } catch (e) {
       showToast('Error al cargar tipos de herramienta: ' + e.message, 'error');

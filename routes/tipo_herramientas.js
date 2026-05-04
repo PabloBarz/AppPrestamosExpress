@@ -7,7 +7,7 @@ const authorizeRoles = require('../middlewares/roles');
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT id_tipo_herramienta, tipo, descripcion
+      SELECT id_tipo_herramienta,  id_categoria, tipo, descripcion
       FROM tipo_herramienta
       ORDER BY tipo ASC
     `);
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT id_tipo_herramienta, tipo, descripcion
+      `SELECT id_tipo_herramienta, id_categoria, tipo, descripcion
        FROM tipo_herramienta
        WHERE id_tipo_herramienta = ?`,
       [req.params.id]
@@ -51,19 +51,19 @@ router.get('/:id', async (req, res) => {
 
 // POST - Crear nuevo tipo de herramienta
 router.post('/', authorizeRoles('Administrador'),async (req, res) => {
-  const { tipo, descripcion } = req.body;
+  const { tipo, descripcion, id_categoria} = req.body;
 
-  if (!tipo || tipo.trim() === '') {
+  if (!tipo || tipo.trim() === '' || !id_categoria) {
     return res.status(400).json({
       success: false,
-      message: 'El tipo de herramienta es requerido',
+      message: 'Tipo y categoría son obligatorios',
     });
   }
 
   try {
     const [result] = await db.query(
-      'INSERT INTO tipo_herramienta (tipo, descripcion) VALUES (?, ?)',
-      [tipo.trim(), descripcion?.trim() || null]
+      'INSERT INTO tipo_herramienta (tipo, descripcion, id_categoria) VALUES (?, ?, ?)',
+      [tipo.trim(), descripcion?.trim() || null, id_categoria]
     );
 
     res.status(201).json({
@@ -82,21 +82,21 @@ router.post('/', authorizeRoles('Administrador'),async (req, res) => {
 
 // PUT - Actualizar tipo de herramienta
 router.put('/:id', authorizeRoles('Administrador'),async (req, res) => {
-  const { tipo, descripcion } = req.body;
+  const { tipo, descripcion, id_categoria} = req.body;
 
-  if (!tipo || tipo.trim() === '') {
+  if (!tipo || tipo.trim() === '' || !id_categoria) {
     return res.status(400).json({
       success: false,
-      message: 'El tipo de herramienta es requerido',
+      message: 'Tipo y categoría son obligatorios',
     });
   }
 
   try {
     const [result] = await db.query(
       `UPDATE tipo_herramienta
-       SET tipo = ?, descripcion = ?
+       SET tipo = ?, descripcion = ?, id_categoria = ?
        WHERE id_tipo_herramienta = ?`,
-      [tipo.trim(), descripcion?.trim() || null, req.params.id]
+      [tipo.trim(), descripcion?.trim() || null, id_categoria, req.params.id]
     );
 
     if (result.affectedRows === 0) {
