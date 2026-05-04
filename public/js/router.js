@@ -67,6 +67,11 @@ const ROUTES = {
     view: "/views/herramientas.html",
     module: () => HerramientasModule,
   },  
+  prestamos: {
+    title: "Préstamos",
+    view: "/views/prestamos.html",
+    module: () => PrestamosModule,
+  },
 };
 
 /* ════════════════════════════════════════════
@@ -160,6 +165,10 @@ const Router = {
       }
 
       this.currentPage = page;
+      //  actualizar badges siempre al navegar
+      if (typeof updateBadges === "function") {
+        updateBadges();
+      }
 
       // 7. Cerrar sidebar en móvil
       this._closeSidebarMobile();

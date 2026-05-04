@@ -124,6 +124,20 @@ function updateBadges() {
   setText("badge-proveedores", AppState.proveedores.length);
   setText("badge-categorias", AppState.categorias.length);
   setText("badge-herramientas", AppState.herramientas.length);
+  
+  // PRÉSTAMOS ACTIVOS (badge sidebar)
+  http("/api/prestamos/activos")
+    .then(res => {
+      const total = res.data.length;
+
+      const badge = document.getElementById("badge-prestamos");
+      if (!badge) return;
+
+      badge.textContent = total;
+      badge.style.display = total > 0 ? "inline-block" : "none";
+    })
+    .catch(() => {});
+  
 }
 
 async function loadCatalogData() {

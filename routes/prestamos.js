@@ -55,20 +55,43 @@ router.post("/", authorizeRoles("Administrador"), async (req, res) => {
 
     if (!jornada) throw new Error("Colaborador sin jornada");
 
-    const ahora = new Date();
-    const fechaHoy = ahora.toISOString().split("T")[0];
-    const fechaHoraFin = new Date(`${fechaHoy}T${jornada.hora_fin}`);
+    // hora Perú
+    const ahora = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Lima" })
+    );
+
+    // fecha YYYY-MM-DD local
+    const fechaHoy = ahora.toLocaleDateString("en-CA");
+
+    // construir hora fin correcta
+    const [h, m, s] = jornada.hora_fin.split(":");
+
+    const fechaHoraFin = new Date(ahora);
+    fechaHoraFin.setHours(h, m, s, 0);
 
     //  BLOQUEO FUERA DE JORNADA
     if (fechaHoraFin < ahora) {
       throw new Error("El colaborador ya terminó su jornada");
-    }
+    } 
+
+    const [[colaborador]] = await conn.query(`
+      SELECT a.nombre AS area
+      FROM colaboradores c
+      JOIN areas a ON c.id_area = a.id_area
+      WHERE c.id_colaborador = ?
+    `, [id_colaborador]);
 
     // 3. CREAR PRÉSTAMO
     const [prestamoResult] = await conn.query(
-      `INSERT INTO prestamos (id_usuario, id_colaborador, observacion)
-       VALUES (?, ?, ?)`,
-      [req.user.id_usuario, id_colaborador, observacion || null]
+      `INSERT INTO prestamos 
+      (id_usuario_prestamo, id_colaborador, area_uso, observacion)
+      VALUES (?, ?, ?, ?)`,
+      [
+        req.user.id_usuario,
+        id_colaborador,
+        colaborador.area,
+        observacion || null
+      ]
     );
 
     const id_prestamo = prestamoResult.insertId;
@@ -124,18 +147,19 @@ router.get("/activos", async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
-        p.id_prestamo,
-        p.fecha_prestamo,
-        per.nombre,
-        per.apellidos,
-        COUNT(dp.id_detalle_prestamo) AS total_herramientas
-      FROM prestamos p
-      JOIN colaboradores c ON p.id_colaborador = c.id_colaborador
-      JOIN personas per ON c.id_persona = per.id_persona
-      JOIN detalle_prestamos dp ON p.id_prestamo = dp.id_prestamo
-      WHERE p.estado = 'Activo'
-      GROUP BY p.id_prestamo
-      ORDER BY p.id_prestamo DESC
+      p.id_prestamo,
+      MIN(dp.hora_prestamo) AS fecha_prestamo,
+      p.estado,
+      per.nombre,
+      per.apellidos,
+      COUNT(dp.id_detalle_prestamo) AS total_herramientas
+    FROM prestamos p
+    JOIN colaboradores c ON p.id_colaborador = c.id_colaborador
+    JOIN personas per ON c.id_persona = per.id_persona
+    JOIN detalle_prestamos dp ON p.id_prestamo = dp.id_prestamo
+    WHERE p.estado = 'Activo'
+    GROUP BY p.id_prestamo
+    ORDER BY p.id_prestamo DESC
     `);
 
     res.json({ success: true, data: rows });

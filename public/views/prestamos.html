@@ -1,0 +1,62 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Préstamos</h1>
+    <p class="page-subtitle">Gestión de préstamos de herramientas</p>
+  </div>
+
+  <button class="btn-primary-action" id="btnNuevoPrestamo">
+    <i class="bi bi-plus-lg"></i> Nuevo Préstamo
+  </button>
+</div>
+
+<div class="search-bar-row">
+  <button class="btn-icon-outline" id="btnRefreshPrestamos">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+</div>
+
+<div class="card-panel">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Colaborador</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="bodyPrestamos"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalPrestamoOverlay">
+  <div class="modal-panel">
+
+    <div class="modal-header-custom">
+      <div class="modal-title-custom">Nuevo Préstamo</div>
+      <button id="btnClosePrestamo">✖</button>
+    </div>
+
+    <div class="modal-body-custom">
+      <label>Colaborador</label>
+      <select id="pColaborador" class="input-custom"></select>
+
+      <label class="mt-2">Herramientas</label>
+      <select id="pHerramientas" multiple class="input-custom"></select>
+
+      <label class="mt-2">Observación</label>
+      <input id="pObservacion" class="input-custom">
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" id="btnCancelPrestamo">Cancelar</button>
+      <button class="btn-save" id="btnSavePrestamo">Guardar</button>
+    </div>
+
+  </div>
+</div>

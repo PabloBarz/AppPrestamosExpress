@@ -160,6 +160,11 @@ INSERT INTO personas (tipodoc, doc, nombre, apellidos, telefono, fecha_nac) VALU
 ('DNI', '87654321', 'Juan', 'Perez', '999222222', '1995-03-15'),
 ('DNI', '11223344', 'Maria', 'Lopez', '999333333', '1998-08-20');
 
+INSERT INTO personas (tipodoc, doc, nombre, apellidos, telefono, fecha_nac) VALUES
+('DNI', '44556677', 'Carlos', 'Ramirez', '999444444', '1992-06-10'),
+('DNI', '55667788', 'Luis', 'Gomez', '999555555', '1990-11-25'),
+('DNI', '66778899', 'Ana', 'Torres', '999666666', '1997-02-18');
+
 
 -- =========================
 -- USUARIOS
@@ -171,3 +176,12 @@ INSERT INTO usuarios (id_persona, id_rol, user_name, contrasena) VALUES
 
 /* user_name = admin
  contrasena = 123456*/
+
+INSERT INTO jornadas (nombre, hora_inicio, hora_fin, turno) VALUES
+('Turno Mañana', '08:00:00', '17:00:00', 'Mañana'),
+('Turno Tarde', '14:00:00', '22:00:00', 'Tarde');
+
+INSERT INTO colaboradores (id_persona, id_jornada, id_area, cargo, estado) VALUES
+(4, 1, 2, 'Técnico', 'Activo'),     -- Carlos → Mantenimiento
+(5, 2, 3, 'Operador', 'Activo'),    -- Luis → Producción
+(6, 1, 1, 'Auxiliar', 'Activo');    -- Ana → Almacén
