@@ -20,16 +20,18 @@ const TipoHerramientasModule = {
     }
 
     document.getElementById('bodyTiposHerramienta').innerHTML =
-      `<tr><td colspan="5" class="text-center py-5"><div class="spinner-custom"></div></td></tr>`;
+      `<tr><td colspan="6" class="text-center py-5"><div class="spinner-custom"></div></td></tr>`;
 
     try {
-      const [tiposRes, modelosRes] = await Promise.all([
+      const [tiposRes, modelosRes, categoriasRes] = await Promise.all([
         http('/api/tipo-herramientas'),
         http('/api/modelos'),
+        http('/api/categorias'),
       ]);
 
       AppState.tiposHerramienta = tiposRes.data;
       AppState.modelos = modelosRes.data;
+      AppState.categorias = categoriasRes.data;
 
       let lista = AppState.tiposHerramienta;
 
@@ -52,7 +54,7 @@ const TipoHerramientasModule = {
     const tbody = document.getElementById('bodyTiposHerramienta');
 
     if (!lista.length) {
-      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">
         <i class="bi bi-tools"></i><p>No hay tipos de herramienta registrados</p>
       </div></td></tr>`;
       return;
@@ -62,6 +64,10 @@ const TipoHerramientasModule = {
       const totalModelos = AppState.modelos.filter(modelo =>
         Number(modelo.id_tipo_herramienta) === Number(tipoHerramienta.id_tipo_herramienta)
       ).length;
+
+      const categoria = AppState.categorias.find(
+        c => Number(c.id_categoria) === Number(tipoHerramienta.id_categoria)
+      );
 
       return `
         <tr>
@@ -73,6 +79,9 @@ const TipoHerramientasModule = {
               </div>
               <span class="fw-600">${escapeHtml(tipoHerramienta.tipo)}</span>
             </div>
+          </td>
+          <td>
+            ${categoria ? escapeHtml(categoria.nombre) : '-'}
           </td>
           <td>${escapeHtml(tipoHerramienta.descripcion) || '<span class="text-muted">Sin descripcion</span>'}</td>
           <td><span class="badge-garantia">${totalModelos} modelo${totalModelos !== 1 ? 's' : ''}</span></td>
@@ -102,20 +111,43 @@ const TipoHerramientasModule = {
   _filter() {
     const search = document.getElementById('searchTipoHerramienta')?.value.toLowerCase() || '';
 
-    this._render(AppState.tiposHerramienta.filter(tipoHerramienta =>
-      tipoHerramienta.tipo.toLowerCase().includes(search) ||
-      (tipoHerramienta.descripcion || '').toLowerCase().includes(search)
-    ));
+    let lista = AppState.tiposHerramienta;
+
+    if (this.params?.id_categoria) {
+      lista = lista.filter(
+        t => Number(t.id_categoria) === Number(this.params.id_categoria)
+      );
+    }
+
+    this._render(
+      lista.filter(tipoHerramienta =>
+        tipoHerramienta.tipo.toLowerCase().includes(search) ||
+        (tipoHerramienta.descripcion || '').toLowerCase().includes(search)
+      )
+    );
   },
 
   _openModal(mode, tipoHerramienta = null) {
+
     const isEdit = mode === 'edit';
 
+    const select = document.getElementById('thCategoria');
+
+    select.innerHTML = AppState.categorias.map(c => `
+      <option value="${c.id_categoria}">
+        ${escapeHtml(c.nombre)}
+      </option>
+    `).join('');
+
+    if (isEdit) {
+      select.value = tipoHerramienta.id_categoria;
+    }
+    
     setText('modalTipoHerramientaTitle', isEdit ? 'Editar Tipo' : 'Nuevo Tipo');
     document.getElementById('tipoHerramientaId').value = isEdit ? tipoHerramienta.id_tipo_herramienta : '';
     document.getElementById('thTipo').value = isEdit ? tipoHerramienta.tipo : '';
     document.getElementById('thDescripcion').value = isEdit ? (tipoHerramienta.descripcion || '') : '';
-    clearErrors(['thTipo']);
+    clearErrors(['thTipo', 'thCategoria']);
     openOverlay('modalTipoHerramientaOverlay');
   },
 
@@ -145,18 +177,22 @@ const TipoHerramientasModule = {
     const id = document.getElementById('tipoHerramientaId').value;
     const tipo = document.getElementById('thTipo').value.trim();
     const descripcion = document.getElementById('thDescripcion').value.trim();
+    const id_categoria = document.getElementById('thCategoria').value;
 
-    clearErrors(['thTipo']);
+    clearErrors(['thTipo', 'thCategoria']);
 
-    if (!tipo) {
-      setError('thTipo', 'err-thTipo', 'El tipo de herramienta es requerido');
+    if (!tipo || !id_categoria) {
+      setError('thTipo', 'err-thTipo', 'Tipo requerido');
+      setError('thCategoria', 'err-thCategoria', 'Categoría requerida');
       return;
     }
 
     const isEdit = !!id;
+
     const payload = {
       tipo,
       descripcion: descripcion || null,
+      id_categoria
     };
 
     setLoading(

@@ -25,6 +25,7 @@
         <tr>
           <th>#</th>
           <th>Tipo</th>
+          <th>Categoría</th>
           <th>Descripcion</th>
           <th>Modelos</th>
           <th>Acciones</th>
@@ -52,6 +53,10 @@
     <div class="modal-body-custom">
       <form id="formTipoHerramienta" novalidate>
         <input type="hidden" id="tipoHerramientaId" />
+
+        <label class="form-label-custom">Categoría <span class="required">*</span></label>
+        <select id="thCategoria" class="input-custom"></select>
+        <div class="field-error" id="err-thCategoria"></div>
 
         <label class="form-label-custom">Tipo <span class="required">*</span></label>
         <input type="text" id="thTipo" class="input-custom" placeholder="Ej: Electrica" maxlength="50" required />
