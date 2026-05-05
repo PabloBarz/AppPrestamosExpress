@@ -60,3 +60,46 @@
 
   </div>
 </div>
+
+<!-- MODAL DETALLE PRÉSTAMO -->
+<div class="modal-overlay" id="modalDetallePrestamo">
+  <div class="modal-panel">
+
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom">Detalle de Préstamo</div>
+        <div class="modal-subtitle">Herramientas prestadas</div>
+      </div>
+      <button class="btn-modal-close" onclick="closeOverlay('modalDetallePrestamo')">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Hora préstamo</th>
+              <th>Hora esperada</th>
+              <th>Hora devolución</th>
+              <th>Estado</th>
+              <th>Condición</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+
+          <tbody id="detallePrestamoBody">
+            <tr>
+              <td colspan="7" class="text-center py-5">
+                <div class="spinner-custom"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

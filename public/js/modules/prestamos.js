@@ -15,7 +15,7 @@ const PrestamosModule = {
         http('/api/herramientas')
       ]);
 
-      
+
       this.data = prestamos.data;
       AppState.colaboradores = colaboradores.data;
       AppState.herramientas = herramientas.data;
@@ -129,8 +129,66 @@ const PrestamosModule = {
       .addEventListener('click', () => this.load());
   },
 
-  ver(id) {
-  showToast(`Detalle de préstamo ${id} (aún no implementado)`, 'info');
-}
+  async ver(id) {
+    try {
+      const res = await http(`/api/prestamos/${id}`);
+
+      const tbody = document.getElementById("detallePrestamoBody");
+
+      tbody.innerHTML = res.data.map(d => `
+        <tr>
+          <td>${d.codigo}</td>
+
+          <td>${new Date(d.hora_prestamo).toLocaleString()}</td>
+
+          <td>${new Date(d.hora_devolucion_esperada).toLocaleTimeString()}</td>
+
+          <td>
+            ${d.hora_devolucion_final 
+              ? new Date(d.hora_devolucion_final).toLocaleTimeString()
+              : '<span class="text-muted">Pendiente</span>'
+            }
+          </td>
+
+          <td>${this._badgeEstado(d.estado)}</td>
+
+          <td>
+            ${d.estado_devolucion || '<span class="text-muted">—</span>'}
+          </td>
+
+          <td>
+            ${
+              d.estado === 'Prestado'
+                ? `<button class="btn-sm btn-success"
+                    onclick="PrestamosModule.devolver(${d.id_detalle_prestamo})">
+                    Devolver
+                  </button>`
+                : '<span class="text-muted">—</span>'
+            }
+          </td>
+        </tr>
+      `).join('');
+
+      openOverlay("modalDetallePrestamo");
+
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  },
+
+  async devolver(id_detalle) {
+    try {
+      await http(`/api/prestamos/devolver/${id_detalle}`, 'PATCH', {});
+
+      showToast('Herramienta devuelta', 'success');
+
+      // refresca detalle
+      document.getElementById('modalDetallePrestamo').classList.remove('open');
+      await this.load();
+
+    } catch (e) {
+      showToast(e.message, 'error');
+    }
+  }
 
 };

@@ -172,6 +172,35 @@ router.get("/activos", async (req, res) => {
   }
 });
 
+// =========================
+// GET - DETALLE PRÉSTAMO
+// =========================
+router.get("/:id", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        dp.id_detalle_prestamo,
+        h.codigo,
+        dp.hora_prestamo,
+        dp.hora_devolucion_esperada,
+        dp.hora_devolucion_final,
+        dp.estado,
+        dp.estado_devolucion
+      FROM detalle_prestamos dp
+      JOIN herramientas h ON dp.id_herramienta = h.id_herramienta
+      WHERE dp.id_prestamo = ?
+    `, [req.params.id]);
+
+    res.json({ success: true, data: rows });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener detalle"
+    });
+  }
+});
+
 
 // =========================
 // GET - VENCIDOS
