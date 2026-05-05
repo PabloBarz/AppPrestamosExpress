@@ -16,8 +16,8 @@
 </div>
 
 <div class="card-panel">
-  <div class="table-responsive">
-    <table class="table-custom">
+  <div class="table-responsive ">
+    <table class="table-custom ">
       <thead>
         <tr>
           <th>#</th>
@@ -99,6 +99,39 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DEVOLVER -->
+<div class="modal-overlay" id="modalDevolver">
+  <div class="modal-panel modal-sm">
+
+    <div class="modal-header-custom">
+      <div class="modal-title-custom">Devolver Herramienta</div>
+    </div>
+
+    <div class="modal-body-custom">
+
+      <input type="hidden" id="devolverDetalleId">
+
+      <label>Estado de la herramienta</label>
+      <select id="estadoDevolucion" class="input-custom">
+        <option value="Bueno">Bueno</option>
+        <option value="Regular">Regular</option>
+        <option value="Danado">Dañado</option>
+        <option value="Incompleto">Incompleto</option>
+      </select>
+
+      <label class="mt-2">Observaciones</label>
+      <textarea id="obsDevolucion" class="input-custom"></textarea>
+
+    </div>
+
+    <div class="modal-footer-custom">
+      <button class="btn-cancel" onclick="closeOverlay('modalDevolver')">Cancelar</button>
+      <button class="btn-save" id="btnConfirmDevolucion">Confirmar</button>
     </div>
 
   </div>

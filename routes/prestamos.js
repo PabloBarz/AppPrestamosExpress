@@ -238,8 +238,8 @@ router.get("/vencidos", async (req, res) => {
 // =========================
 // PATCH - DEVOLVER
 // =========================
-router.patch("/devolver/:id_detalle", async (req, res) => {
-  const { estado_devolucion } = req.body;
+router.patch("/devolver/:id_detalle", require("../middlewares/auth"), async (req, res) => {
+  const { estado_devolucion, observaciones_devolucion } = req.body;
 
   try {
     const [[detalle]] = await db.query(
@@ -259,12 +259,18 @@ router.patch("/devolver/:id_detalle", async (req, res) => {
     //  ACTUALIZAR DETALLE + USUARIO DEVOLUCIÓN
     await db.query(
       `UPDATE detalle_prestamos
-       SET hora_devolucion_final = NOW(),
-           estado_devolucion = ?,
-           id_usuario_devolucion = ?,
-           estado = 'Devuelto'
-       WHERE id_detalle_prestamo = ?`,
-      [estado_devolucion || "Bueno", req.user.id_usuario, req.params.id_detalle]
+        SET hora_devolucion_final = NOW(),
+            estado_devolucion = ?,
+            observaciones_devolucion = ?,
+            id_usuario_devolucion = ?,
+            estado = 'Devuelto'
+        WHERE id_detalle_prestamo = ?`,
+      [
+        estado_devolucion || "Bueno",
+        observaciones_devolucion || null,
+        req.user.id_usuario,
+        req.params.id_detalle
+      ]
     );
 
     // liberar herramienta

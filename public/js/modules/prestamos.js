@@ -49,15 +49,19 @@ const PrestamosModule = {
       </tr>
     `).join('');
   },
-    _badgeEstado(estado) {
+  _badgeEstado(estado) {
     const map = {
       Activo: 'badge-success',
       Finalizado: 'badge-secondary',
-      Vencido: 'badge-danger'
+      Vencido: 'badge-danger',
+      Devuelto: 'badge bg-success',
+      Prestado: 'badge bg-warning text-dark',
     };
 
     return `<span class="badge ${map[estado] || 'badge-secondary'}">${estado}</span>`;
   },
+
+  
 
   _fillSelects() {
     // colaboradores
@@ -127,6 +131,9 @@ const PrestamosModule = {
 
     document.getElementById('btnRefreshPrestamos')
       .addEventListener('click', () => this.load());
+
+    document.getElementById('btnConfirmDevolucion')
+    .addEventListener('click', () => this.confirmDevolucion());
   },
 
   async ver(id) {
@@ -160,7 +167,7 @@ const PrestamosModule = {
             ${
               d.estado === 'Prestado'
                 ? `<button class="btn-sm btn-success"
-                    onclick="PrestamosModule.devolver(${d.id_detalle_prestamo})">
+                    onclick="PrestamosModule.openDevolver(${d.id_detalle_prestamo})">
                     Devolver
                   </button>`
                 : '<span class="text-muted">—</span>'
@@ -176,19 +183,39 @@ const PrestamosModule = {
     }
   },
 
-  async devolver(id_detalle) {
+  async confirmDevolucion() {
+    const id = document.getElementById('devolverDetalleId').value;
+    const estado = document.getElementById('estadoDevolucion').value;
+    const obs = document.getElementById('obsDevolucion').value;
+
     try {
-      await http(`/api/prestamos/devolver/${id_detalle}`, 'PATCH', {});
+      await http(
+        `/api/prestamos/devolver/${id}`,
+        'PATCH',
+        {
+          estado_devolucion: estado,
+          observaciones_devolucion: obs
+        }
+      );
 
-      showToast('Herramienta devuelta', 'success');
+      showToast('Herramienta devuelta correctamente', 'success');
 
-      // refresca detalle
-      document.getElementById('modalDetallePrestamo').classList.remove('open');
+      closeOverlay('modalDevolver');
+      closeOverlay('modalDetallePrestamo');
+
       await this.load();
 
     } catch (e) {
       showToast(e.message, 'error');
     }
+  },
+
+  openDevolver(id) {
+    document.getElementById('devolverDetalleId').value = id;
+    document.getElementById('estadoDevolucion').value = 'Bueno';
+    document.getElementById('obsDevolucion').value = '';
+
+    openOverlay('modalDevolver');
   }
 
 };
