@@ -173,6 +173,64 @@ router.get("/activos", async (req, res) => {
 });
 
 // =========================
+// GET - HISTORIAL
+// =========================
+router.get("/historial", async (req, res) => {
+  const { desde, hasta, colaborador } = req.query;
+
+  try {
+    let sql = `
+      SELECT 
+        p.id_prestamo,
+        MIN(dp.hora_prestamo) AS fecha_prestamo,
+        MAX(dp.hora_devolucion_final) AS fecha_devolucion,
+        p.estado,
+        per.nombre,
+        per.apellidos,
+        COUNT(dp.id_detalle_prestamo) AS total_herramientas
+      FROM prestamos p
+      JOIN colaboradores c ON p.id_colaborador = c.id_colaborador
+      JOIN personas per ON c.id_persona = per.id_persona
+      JOIN detalle_prestamos dp ON p.id_prestamo = dp.id_prestamo
+      WHERE p.estado IN ('Finalizado','Vencido')
+    `;
+
+    const params = [];
+
+    // filtros dinámicos
+    if (desde) {
+      sql += " AND DATE(dp.hora_prestamo) >= ?";
+      params.push(desde);
+    }
+
+    if (hasta) {
+      sql += " AND DATE(dp.hora_prestamo) <= ?";
+      params.push(hasta);
+    }
+
+    if (colaborador) {
+      sql += " AND c.id_colaborador = ?";
+      params.push(colaborador);
+    }
+
+    sql += `
+      GROUP BY p.id_prestamo
+      ORDER BY p.id_prestamo DESC
+    `;
+
+    const [rows] = await db.query(sql, params);
+
+    res.json({ success: true, data: rows });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener historial"
+    });
+  }
+});
+
+// =========================
 // GET - DETALLE PRÉSTAMO
 // =========================
 router.get("/:id", async (req, res) => {
@@ -185,9 +243,12 @@ router.get("/:id", async (req, res) => {
         dp.hora_devolucion_esperada,
         dp.hora_devolucion_final,
         dp.estado,
-        dp.estado_devolucion
+        dp.estado_devolucion,
+        dp.observaciones_devolucion,
+        u.user_name AS usuario_devolucion
       FROM detalle_prestamos dp
       JOIN herramientas h ON dp.id_herramienta = h.id_herramienta
+      LEFT JOIN usuarios u ON dp.id_usuario_devolucion = u.id_usuario
       WHERE dp.id_prestamo = ?
     `, [req.params.id]);
 

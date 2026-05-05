@@ -1,0 +1,85 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Historial de Préstamos</h1>
+    <p class="page-subtitle">Préstamos finalizados y devoluciones</p>
+  </div>
+</div>
+
+<div class="search-bar-row">
+
+  <input type="date" id="fDesde" class="input-custom" style="max-width:160px;">
+  <input type="date" id="fHasta" class="input-custom" style="max-width:160px;">
+
+  <select id="fColaborador" class="input-custom" style="max-width:200px;"></select>
+
+  <button class="btn-primary-action" id="btnFiltrarHistorial">
+    <i class="bi bi-funnel"></i> Filtrar
+  </button>
+
+  <button class="btn-icon-outline" id="btnRefreshHistorial">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+
+</div>
+
+<div class="card-panel">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Colaborador</th>
+          <th>Fecha préstamo</th>
+          <th>Fecha devolución</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="bodyHistorial"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL DETALLE PRÉSTAMO  -->
+<div class="modal-overlay" id="modalDetallePrestamo">
+  <div class="modal-panel">
+
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom">Detalle de Préstamo</div>
+        <div class="modal-subtitle">Herramientas prestadas</div>
+      </div>
+      <button class="btn-modal-close" onclick="closeOverlay('modalDetallePrestamo')">
+        ✖
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Hora préstamo</th>
+              <th>Hora esperada</th>
+              <th>Hora devolución</th>
+              <th>Estado</th>
+              <th>Condición</th>
+              <th>Observación</th>
+              <th>Recibido por</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+
+          <tbody id="detallePrestamoBody">
+            <tr>
+              <td colspan="7">Cargando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

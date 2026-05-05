@@ -13,6 +13,7 @@ const AppState = {
   usuarios: [],
   proveedores: [],
   herramientas: [],
+  colaboradores: [],
   deleteTarget: { type: null, id: null, name: null, onConfirm: null },
 };
 
@@ -124,6 +125,9 @@ function updateBadges() {
   setText("badge-proveedores", AppState.proveedores.length);
   setText("badge-categorias", AppState.categorias.length);
   setText("badge-herramientas", AppState.herramientas.length);
+
+  const token = localStorage.getItem("token");
+  if (!token) return; 
   
   // PRÉSTAMOS ACTIVOS (badge sidebar)
   http("/api/prestamos/activos")
@@ -142,7 +146,7 @@ function updateBadges() {
 
 async function loadCatalogData() {
   try {
-    const [marcasRes, tiposRes, modelosRes, usuariosRes, proveedoresRes, categoriasRes, herramientasRes] =
+    const [marcasRes, tiposRes, modelosRes, usuariosRes, proveedoresRes, categoriasRes, herramientasRes, colaboradoresRes] =
       await Promise.all([
         http("/api/marcas"),
         http("/api/tipo-herramientas"),
@@ -151,6 +155,7 @@ async function loadCatalogData() {
         http("/api/proveedores?estado=Activo"),
         http("/api/categorias"),
         http("/api/herramientas"),
+        http("/api/colaboradores"),
       ]);
 
     AppState.marcas = marcasRes.data;
@@ -160,6 +165,7 @@ async function loadCatalogData() {
     AppState.proveedores = proveedoresRes.data;
     AppState.categorias = categoriasRes.data;
     AppState.herramientas = herramientasRes.data;
+    AppState.colaboradores = colaboradoresRes.data;
     updateBadges();
   } catch (e) {
     showToast("Error al cargar datos iniciales: " + e.message, "error");

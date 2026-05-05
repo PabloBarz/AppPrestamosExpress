@@ -72,6 +72,11 @@ const ROUTES = {
     view: "/views/prestamos.html",
     module: () => PrestamosModule,
   },
+  prestamosHistorial: {
+    title: "Historial",
+    view: "/views/prestamos-historial.html",
+    module: () => PrestamosHistorialModule,
+  },
 };
 
 /* ════════════════════════════════════════════
