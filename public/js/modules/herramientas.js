@@ -33,7 +33,7 @@ const HerramientasModule = {
       AppState.herramientas = herrRes.data;
       AppState.modelos = modelosRes.data;
 
-     
+      this._fillFilters();
 
       this._render(AppState.herramientas);
       updateBadges();
@@ -200,16 +200,84 @@ const HerramientasModule = {
   },
 
   _filter() {
-    const search = document.getElementById('searchHerramienta').value.toLowerCase();
+
+    const search = document.getElementById('searchHerramienta')
+      .value.toLowerCase();
+
+    const estado = document.getElementById('filterEstado').value;
+
+    const categoria = document.getElementById('filterCategoria').value;
+
+    const tipo = document.getElementById('filterTipo').value;
+
+    const marca = document.getElementById('filterMarca').value;
 
     if (!AppState.herramientas) return;
 
-    const filtered = AppState.herramientas.filter(h =>
-      (h.codigo || '').toLowerCase().includes(search) ||
-      (h.modelo || '').toLowerCase().includes(search)
-    );
+    const filtered = AppState.herramientas.filter(h => {
+
+      const matchSearch =
+        (h.codigo || '').toLowerCase().includes(search) ||
+        (h.modelo || '').toLowerCase().includes(search);
+
+      const matchEstado =
+        !estado || h.estado === estado;
+
+      const matchCategoria =
+        !categoria || h.categoria === categoria;
+
+      const matchTipo =
+        !tipo || h.tipo === tipo;
+
+      const matchMarca =
+        !marca || h.marca === marca;
+
+      return (
+        matchSearch &&
+        matchEstado &&
+        matchCategoria &&
+        matchTipo &&
+        matchMarca
+      );
+    });
 
     this._render(filtered);
+  },
+
+  _fillFilters() {
+
+    const categorias = [
+      ...new Set(AppState.herramientas.map(h => h.categoria))
+    ];
+
+    const tipos = [
+      ...new Set(AppState.herramientas.map(h => h.tipo))
+    ];
+
+    const marcas = [
+      ...new Set(AppState.herramientas.map(h => h.marca))
+    ];
+
+    document.getElementById('filterCategoria').innerHTML = `
+      <option value="">Todas las categorías</option>
+      ${categorias.map(c =>
+        `<option value="${c}">${c}</option>`
+      ).join('')}
+    `;
+
+    document.getElementById('filterTipo').innerHTML = `
+      <option value="">Todos los tipos</option>
+      ${tipos.map(t =>
+        `<option value="${t}">${t}</option>`
+      ).join('')}
+    `;
+
+    document.getElementById('filterMarca').innerHTML = `
+      <option value="">Todas las marcas</option>
+      ${marcas.map(m =>
+        `<option value="${m}">${m}</option>`
+      ).join('')}
+    `;
   },
 
   _bindEvents() {
@@ -238,7 +306,16 @@ const HerramientasModule = {
     });
 
     document.getElementById('filterEstado')
-    ?.addEventListener('change', () => this.load());
+    ?.addEventListener('change', () => this._filter());
+
+    document.getElementById('filterCategoria')
+    ?.addEventListener('change', () => this._filter());
+
+    document.getElementById('filterTipo')
+    ?.addEventListener('change', () => this._filter());
+
+    document.getElementById('filterMarca')
+    ?.addEventListener('change', () => this._filter());
 
     document.getElementById('modalEstadoOverlay')
       ?.addEventListener('click', (e) => {
