@@ -7,14 +7,27 @@ const ComprasModule = {
     await this.load();
   },
 
+  detalle: [],
+
   async load() {
+
+    
+
     try {
 
-      const res = await http('/api/compras');
+      const [compras, proveedores, modelos] = await Promise.all([
+        http('/api/compras'),
+        http('/api/proveedores'),
+        http('/api/modelos')
+        ]);
 
-      this.data = res.data;
+        this.data = compras.data;
 
-      this._render();
+        AppState.proveedores = proveedores.data;
+        AppState.modelos = modelos.data;
+
+        this._render();
+        this._fillSelects();
 
     } catch (e) {
       showToast(e.message, 'error');
@@ -77,6 +90,26 @@ const ComprasModule = {
     `).join('');
   },
 
+  _fillSelects() {
+
+    const prov = document.getElementById('cProveedor');
+
+    prov.innerHTML = AppState.proveedores.map(p => `
+        <option value="${p.id_proveedor}">
+        ${p.razon_social}
+        </option>
+    `).join('');
+
+    const modelos = document.getElementById('dModelo');
+
+    modelos.innerHTML = AppState.modelos.map(m => `
+        <option value="${m.id_modelo}">
+        ${m.modelo} - ${m.tipo_herramienta} - ${m.marca}
+        </option>
+    `).join('');
+
+    },
+
   _badgeEstado(estado) {
 
     const map = {
@@ -94,17 +127,172 @@ const ComprasModule = {
   _bindEvents() {
 
     document.getElementById('btnRefreshCompras')
-      ?.addEventListener('click', () => this.load());
+        ?.addEventListener('click', () => this.load());
 
     document.getElementById('btnNuevaCompra')
-      ?.addEventListener('click', () => {
+        ?.addEventListener('click', () => {
 
-        showToast(
-          'Registro de compras próximamente',
-          'info'
-        );
+        this.detalle = [];
 
-      });
-  }
+        this.renderDetalle();
+
+        document.getElementById('cFecha').value =
+            new Date().toISOString().split('T')[0];
+
+        openOverlay('modalCompra');
+
+        });
+
+    document.getElementById('btnAddDetalle')
+        ?.addEventListener('click', () => this.addDetalle());
+
+    document.getElementById('btnSaveCompra')
+        ?.addEventListener('click', () => this.save());
+
+    },
+
+    addDetalle() {
+
+        const id_modelo =
+            document.getElementById('dModelo').value;
+
+        const modeloText =
+            document.getElementById('dModelo')
+            .selectedOptions[0].text;
+
+        const cantidad =
+            parseInt(document.getElementById('dCantidad').value);
+
+        const precio =
+            parseFloat(document.getElementById('dPrecio').value);
+
+        if (!cantidad || !precio) {
+            return showToast(
+            'Complete cantidad y precio',
+            'warning'
+            );
+        }
+
+        this.detalle.push({
+            id_modelo,
+            modelo: modeloText,
+            cantidad,
+            precio,
+            subtotal: cantidad * precio
+        });
+
+        this.renderDetalle();
+
+    },
+
+    renderDetalle() {
+
+        const tbody =
+            document.getElementById('bodyDetalleCompra');
+
+        if (!this.detalle.length) {
+
+            tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center">
+                Sin detalles
+                </td>
+            </tr>
+            `;
+
+            document.getElementById('totalCompra')
+            .textContent = 'S/ 0.00';
+
+            return;
+        }
+
+        tbody.innerHTML = this.detalle.map((d, i) => `
+            <tr>
+
+            <td>${d.modelo}</td>
+
+            <td>${d.cantidad}</td>
+
+            <td>S/ ${d.precio.toFixed(2)}</td>
+
+            <td>S/ ${d.subtotal.toFixed(2)}</td>
+
+            <td>
+                <button
+                class="btn-sm btn-danger"
+                onclick="ComprasModule.removeDetalle(${i})"
+                >
+                X
+                </button>
+            </td>
+
+            </tr>
+        `).join('');
+
+        const total = this.detalle
+            .reduce((acc, d) => acc + d.subtotal, 0);
+
+        document.getElementById('totalCompra')
+            .textContent = `S/ ${total.toFixed(2)}`;
+
+    },
+
+    removeDetalle(index) {
+
+        this.detalle.splice(index, 1);
+
+        this.renderDetalle();
+
+    },
+
+    async save() {
+
+        if (!this.detalle.length) {
+            return showToast(
+            'Agregue detalles',
+            'warning'
+            );
+        }
+
+        try {
+
+            const data = {
+            id_proveedor:
+                document.getElementById('cProveedor').value,
+
+            fecha_compra:
+                document.getElementById('cFecha').value,
+
+            tipo_comprobante:
+                document.getElementById('cTipo').value,
+
+            numero_comprobante:
+                document.getElementById('cNumero').value,
+
+            detalles: this.detalle
+            };
+
+            await http(
+            '/api/compras',
+            'POST',
+            data
+            );
+
+            showToast(
+            'Compra registrada',
+            'success'
+            );
+
+            closeOverlay('modalCompra');
+
+            await this.load();
+
+        } catch (e) {
+
+            showToast(e.message, 'error');
+
+        }
+
+    },
 
 };
