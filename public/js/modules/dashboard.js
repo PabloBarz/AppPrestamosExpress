@@ -18,7 +18,7 @@ const DashboardModule = {
     setText('stat-total-marcas', AppState.marcas.length);
     setText('stat-total-tipos', AppState.tiposHerramienta.length);
     setText('stat-total-modelos', AppState.modelos.length);
-    setText('stat-total-herramientas', '0');
+    setText('stat-total-herramientas', AppState.herramientas.length);
   },
 
   _renderRecentModels() {

@@ -46,7 +46,7 @@ router.post("/", authorizeRoles("Administrador"), async (req, res) => {
 
     // 2. OBTENER JORNADA
     const [[jornada]] = await conn.query(
-      `SELECT j.hora_fin
+      `SELECT j.hora_fin, j.hora_inicio
        FROM colaboradores c
        JOIN jornadas j ON c.id_jornada = j.id_jornada
        WHERE c.id_colaborador = ?`,
@@ -63,16 +63,29 @@ router.post("/", authorizeRoles("Administrador"), async (req, res) => {
     // fecha YYYY-MM-DD local
     const fechaHoy = ahora.toLocaleDateString("en-CA");
 
+    const [hi, mi, si] = jornada.hora_inicio.split(":");
     // construir hora fin correcta
     const [h, m, s] = jornada.hora_fin.split(":");
+
+    const fechaHoraInicio = new Date(ahora); 
+    fechaHoraInicio.setHours(hi, mi, si, 0);  
 
     const fechaHoraFin = new Date(ahora);
     fechaHoraFin.setHours(h, m, s, 0);
 
+    //  BLOQUEO ANTES DE JORNADA
+    if (ahora < fechaHoraInicio) {
+      throw new Error(
+        "La jornada del colaborador aún no inicia"
+      );
+    }
+
     //  BLOQUEO FUERA DE JORNADA
-    if (fechaHoraFin < ahora) {
-      throw new Error("El colaborador ya terminó su jornada");
-    } 
+    if (ahora > fechaHoraFin) {
+      throw new Error(
+        "El colaborador ya terminó su jornada"
+      );
+    }
 
     const [[colaborador]] = await conn.query(`
       SELECT a.nombre AS area
