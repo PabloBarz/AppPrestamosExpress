@@ -117,10 +117,10 @@
         <table class="table-custom">
           <thead>
             <tr>
-              <th style="width:47%">Modelo</th>
-              <th style="width:5%">Cantidad</th>
-              <th style="width:24%">Precio</th>
-              <th style="width:24%">Subtotal</th>
+              <th style="width: 47%">Modelo</th>
+              <th style="width: 5%">Cantidad</th>
+              <th style="width: 24%">Precio</th>
+              <th style="width: 24%">Subtotal</th>
               <th></th>
             </tr>
           </thead>
@@ -147,6 +147,58 @@
       </button>
 
       <button class="btn-save" id="btnSaveCompra">Guardar Compra</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE COMPRA -->
+<div class="modal-overlay" id="modalDetalleCompra">
+  <div class="modal-panel" style="max-width: 1100px">
+    <div class="modal-header-custom">
+      <div>
+        <div class="modal-title-custom">Detalle de Compra</div>
+
+        <div class="modal-subtitle">Herramientas generadas por la compra</div>
+      </div>
+
+      <button
+        class="btn-modal-close"
+        onclick="closeOverlay('modalDetalleCompra')"
+      >
+        ✖
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Modelo</th>
+
+              <th>Cantidad</th>
+
+              <th>Precio</th>
+
+              <th>Subtotal</th>
+
+              <th>Código</th>
+
+              <th>Serie</th>
+
+              <th>Estado</th>
+
+              <th>Ubicación</th>
+            </tr>
+          </thead>
+
+          <tbody id="bodyDetalleCompraView">
+            <tr>
+              <td colspan="8" class="text-center py-4">Sin detalles</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

@@ -206,4 +206,62 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        dc.id_detalle_compras,
+        mo.modelo,
+        ma.nombre AS marca,
+        th.tipo AS tipo_herramienta,
+
+        dc.cantidad,
+        dc.precio_unitario,
+        dc.subtotal,
+
+        h.codigo,
+        h.numero_serie,
+        h.estado,
+        h.ubicacion
+
+      FROM detalle_compras dc
+
+      INNER JOIN modelos mo
+        ON mo.id_modelo = dc.id_modelo
+
+      INNER JOIN marcas ma
+        ON ma.id_marca = mo.id_marca
+
+      INNER JOIN tipo_herramienta th
+        ON th.id_tipo_herramienta = mo.id_tipo_herramienta
+
+      LEFT JOIN herramientas h
+        ON h.id_detalle_compras = dc.id_detalle_compras
+
+      WHERE dc.id_compra = ?
+
+      ORDER BY dc.id_detalle_compras DESC
+      `,
+      [req.params.id]
+    );
+
+    res.json({
+      success: true,
+      data: rows
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+});
+
 module.exports = router;

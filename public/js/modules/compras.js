@@ -81,7 +81,7 @@ const ComprasModule = {
         </td>
 
         <td>
-          <button class="btn-sm btn-primary">
+          <button class="btn-sm btn-primary" onclick="ComprasModule.ver(${c.id_compra})">
             Ver
           </button>
         </td>
@@ -284,14 +284,82 @@ const ComprasModule = {
             );
 
             closeOverlay('modalCompra');
-
             await this.load();
 
         } catch (e) {
-
             showToast(e.message, 'error');
-
         }
+
+    },
+
+    async ver(id) {
+
+      try {
+        const res = await http(`/api/compras/${id}`);
+
+        const tbody =
+          document.getElementById('bodyDetalleCompraView');
+
+        if (!res.data.length) {
+
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="text-center">
+                Sin detalles
+              </td>
+            </tr>
+          `;
+
+          return;
+        }
+
+        tbody.innerHTML = res.data.map(d => `
+
+          <tr>
+            <td>
+              ${d.modelo}
+              <br>
+              <small class="text-muted">
+                ${d.tipo_herramienta} - ${d.marca}
+              </small>
+            </td>
+
+            <td>
+              ${d.cantidad}
+            </td>
+
+            <td class="text-nowrap">
+              S/ ${parseFloat(d.precio_unitario).toFixed(2)}
+            </td>
+
+            <td class="text-nowrap">
+              S/ ${parseFloat(d.subtotal).toFixed(2)}
+            </td>
+
+            <td>
+              ${d.codigo || '—'}
+            </td>
+
+            <td>
+              ${d.numero_serie || '—'}
+            </td>
+
+            <td>
+              ${this._badgeEstado(d.estado)}
+            </td>
+
+            <td>
+              ${d.ubicacion || '—'}
+            </td>
+          </tr>
+
+        `).join('');
+
+        openOverlay('modalDetalleCompra');
+
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
 
     },
 
