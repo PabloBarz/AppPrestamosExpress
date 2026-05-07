@@ -15,11 +15,34 @@ const ComprasModule = {
 
     try {
 
+      const params = new URLSearchParams();
+
+      const search =
+        document.getElementById('searchCompra')?.value;
+
+      const desde =
+        document.getElementById('fDesdeCompra')?.value;
+
+      const hasta =
+        document.getElementById('fHastaCompra')?.value;
+
+      const estado =
+        document.getElementById('fEstadoCompra')?.value;
+
+      const tipo =
+        document.getElementById('fTipoCompra')?.value;
+
+      if (search) params.append('search', search);
+      if (desde) params.append('desde', desde);
+      if (hasta) params.append('hasta', hasta);
+      if (estado) params.append('estado', estado);
+      if (tipo) params.append('tipo', tipo);
+
       const [compras, proveedores, modelos] = await Promise.all([
-        http('/api/compras'),
+        http(`/api/compras?${params.toString()}`),
         http('/api/proveedores'),
         http('/api/modelos')
-        ]);
+      ]);
 
         this.data = compras.data;
 
@@ -127,6 +150,19 @@ const ComprasModule = {
   _bindEvents() {
 
     document.getElementById('btnRefreshCompras')
+      ?.addEventListener('click', () => {
+
+        document.getElementById('searchCompra').value = '';
+        document.getElementById('fDesdeCompra').value = '';
+        document.getElementById('fHastaCompra').value = '';
+        document.getElementById('fEstadoCompra').value = '';
+        document.getElementById('fTipoCompra').value = '';
+
+        this.load();
+
+    });
+
+    document.getElementById('btnBuscarCompras')
         ?.addEventListener('click', () => this.load());
 
     document.getElementById('btnNuevaCompra')

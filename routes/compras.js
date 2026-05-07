@@ -7,26 +7,101 @@ const db = require("../config/db");
 // =========================
 // GET - LISTAR COMPRAS
 // =========================
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
 
-    const [rows] = await db.query(`
+    const {
+      search = '',
+      desde = '',
+      hasta = '',
+      estado = '',
+      tipo = ''
+    } = req.query;
+
+    let sql = `
       SELECT
         c.id_compra,
-        c.fecha_compra,
+        p.razon_social,
         c.tipo_comprobante,
         c.numero_comprobante,
+        c.fecha_compra,
         c.total,
         c.estado,
-        p.razon_social,
         u.user_name
+
       FROM compras c
+
       INNER JOIN proveedores p
-        ON c.id_proveedor = p.id_proveedor
+        ON p.id_proveedor = c.id_proveedor
+
       INNER JOIN usuarios u
-        ON c.id_usuario = u.id_usuario
+        ON u.id_usuario = c.id_usuario
+
+      WHERE 1=1
+    `;
+
+    const params = [];
+    // =========================
+    // BUSCADOR
+    // =========================
+    if (search) {
+
+      sql += `
+        AND (
+          c.numero_comprobante LIKE ?
+          OR p.razon_social LIKE ?
+        )
+      `;
+      params.push(`%${search}%`);
+      params.push(`%${search}%`);
+    }
+
+    // =========================
+    // FECHA DESDE
+    // =========================
+    if (desde) {
+      sql += `
+        AND c.fecha_compra >= ?
+      `;
+      params.push(desde);
+    }
+
+    // =========================
+    // FECHA HASTA
+    // =========================
+    if (hasta) {
+      sql += `
+        AND c.fecha_compra <= ?
+      `;
+
+      params.push(hasta);
+    }
+
+    // =========================
+    // ESTADO
+    // =========================
+    if (estado) {
+      sql += `
+        AND c.estado = ?
+      `;
+
+      params.push(estado);
+    }
+
+    if (tipo) {
+
+      sql += `
+        AND c.tipo_comprobante = ?
+      `;
+
+      params.push(tipo);
+    }
+
+    sql += `
       ORDER BY c.id_compra DESC
-    `);
+    `;
+
+    const [rows] = await db.query(sql, params);
 
     res.json({
       success: true,
@@ -34,12 +109,14 @@ router.get("/", async (req, res) => {
     });
 
   } catch (err) {
+
     console.error(err);
 
     res.status(500).json({
       success: false,
-      message: "Error al obtener compras"
+      message: err.message
     });
+
   }
 });
 

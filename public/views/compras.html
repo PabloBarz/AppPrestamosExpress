@@ -12,9 +12,58 @@
 </div>
 
 <div class="search-bar-row">
+
+  <input
+    type="text"
+    id="searchCompra"
+    class="input-custom"
+    placeholder="Buscar..."
+    style="max-width:220px;"
+  >
+  <select
+  id="fTipoCompra"
+  class="input-custom"
+  style="max-width:170px;"
+  >
+    <option value="">Todos los tipos</option>
+    <option value="Factura">Factura</option>
+    <option value="Boleta">Boleta</option>
+    <option value="Ticket">Ticket</option>
+  </select>
+
+  <input
+    type="date"
+    id="fDesdeCompra"
+    class="input-custom"
+    style="max-width:170px;"
+  >
+
+  <input
+    type="date"
+    id="fHastaCompra"
+    class="input-custom"
+    style="max-width:170px;"
+  >
+
+  <select
+    id="fEstadoCompra"
+    class="input-custom"
+    style="max-width:170px;"
+  >
+    <option value="">Todos</option>
+    <option value="Registrado">Registrado</option>
+    <option value="Anulado">Anulado</option>
+  </select>
+
+  <button class="btn-primary-action" id="btnBuscarCompras">
+    <i class="bi bi-search"></i>
+    Buscar
+  </button>
+
   <button class="btn-icon-outline" id="btnRefreshCompras">
     <i class="bi bi-arrow-clockwise"></i>
   </button>
+
 </div>
 
 <div class="card-panel">
