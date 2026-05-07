@@ -185,3 +185,54 @@ INSERT INTO colaboradores (id_persona, id_jornada, id_area, cargo, estado) VALUE
 (4, 1, 2, 'Técnico', 'Activo'),     -- Carlos → Mantenimiento
 (5, 2, 3, 'Operador', 'Activo'),    -- Luis → Producción
 (6, 1, 1, 'Auxiliar', 'Activo');    -- Ana → Almacén
+
+-- =========================
+-- PROVEEDORES
+-- =========================
+INSERT INTO proveedores (
+    razon_social,
+    ruc,
+    telefono,
+    direccion,
+    email
+) VALUES
+('Bosch Perú SAC', '20111111111', '999111222', 'Av. Industrial 100', 'ventas@bosch.pe'),
+('Makita Tools Perú', '20222222222', '999222333', 'Av. Herramientas 200', 'contacto@makita.pe'),
+('Ferretería Industrial SAC', '20333333333', '999333444', 'Jr. Comercio 300', 'ventas@ferreteria.pe');
+
+-- =========================
+-- COMPRAS
+-- =========================
+INSERT INTO compras (
+    id_proveedor,
+    id_usuario,
+    fecha_compra,
+    tipo_comprobante,
+    numero_comprobante,
+    total
+) VALUES
+(1, 1, '2026-05-01', 'Factura', 'F001-000001', 1800.00),
+(2, 1, '2026-05-03', 'Factura', 'F001-000002', 950.00),
+(3, 1, '2026-05-05', 'Boleta', 'B001-000001', 450.00);
+
+-- =========================
+-- DETALLE COMPRAS
+-- =========================
+INSERT INTO detalle_compras (
+    id_compra,
+    id_modelo,
+    cantidad,
+    precio_unitario,
+    subtotal
+) VALUES
+
+-- COMPRA 1
+(1, 1, 2, 400.00, 800.00),
+(1, 10, 5, 200.00, 1000.00),
+
+-- COMPRA 2
+(2, 2, 1, 450.00, 450.00),
+(2, 5, 1, 500.00, 500.00),
+
+-- COMPRA 3
+(3, 11, 3, 150.00, 450.00);
