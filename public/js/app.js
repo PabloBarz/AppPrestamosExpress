@@ -197,10 +197,10 @@ document.addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", async () => {
   DeleteModal.render();
   Router.init();
-  await loadCatalogData();
-
+  
   const token = localStorage.getItem("token");
   if (token) {
+    await loadCatalogData();
     Router.navigateTo("dashboard");
   } else {
     Router.navigateTo("login");

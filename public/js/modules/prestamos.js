@@ -75,7 +75,11 @@ const PrestamosModule = {
 
     const hSel = document.getElementById('pHerramientas');
     hSel.innerHTML = herramientas.map(h =>
-      `<option value="${h.id_herramienta}">${h.codigo}</option>`
+      `
+      <option value="${h.id_herramienta}">
+        ${h.codigo} - ${h.modelo} - ${h.tipo} - ${h.marca}
+      </option>
+      `
     ).join('');
   },
 

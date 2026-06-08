@@ -2,6 +2,6 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=appprestamo
-DB_PORT3306
+DB_PORT=3306
 PORT=3000
-JWT_SECRET=
+JWT_SECRET=secret_key
